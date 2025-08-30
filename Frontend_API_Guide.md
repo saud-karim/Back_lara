@@ -3311,29 +3311,74 @@ const response = await fetch('/api/v1/admin/products', {
 }
 ```
 
-### 5. تحديث منتج
+### 5. تحديث منتج (مع دعم FormData للصور) 🆕
 ```javascript
-PUT /admin/products/{product_id}
+// ⚠️ مهم: استخدم POST مع _method=PUT للتحديث!
+POST /admin/products/{product_id}
 
 // Headers: 
 // Authorization: Bearer {admin_token}
-// Content-Type: application/json
+// Content-Type: multipart/form-data
 
-// Request Body (نفس بيانات الإنشاء)
-{
-  "name_ar": "مثقاب كهربائي احترافي محدث",
-  "name_en": "Updated Professional Electric Drill",
-  "description_ar": "مثقاب كهربائي قوي ومحدث",
-  "description_en": "Updated powerful electric drill",
-  "price": "420.00",
-  "original_price": "500.00",
-  "stock": 30,
-  "category_id": 2,
-  "supplier_id": 1,
-  "brand_id": 1,
-  "status": "active",
-  "featured": false
+// ⚠️ مهم: استخدم FormData مع method spoofing!
+const formData = new FormData();
+
+// إضافة method spoofing للتحديث
+formData.append('_method', 'PUT');
+
+// البيانات الأساسية
+formData.append('name_ar', 'مثقاب كهربائي احترافي محدث');
+formData.append('name_en', 'Updated Professional Electric Drill');
+formData.append('description_ar', 'مثقاب كهربائي قوي ومحدث للاستخدام المهني');
+formData.append('description_en', 'Updated powerful electric drill for professional use');
+formData.append('price', '420.00');
+formData.append('original_price', '500.00');
+formData.append('stock', '30');
+formData.append('category_id', '2');
+formData.append('supplier_id', '1');
+formData.append('brand_id', '1');
+formData.append('status', 'active');
+formData.append('featured', '0'); // Boolean كـ string
+
+// الصور الموجودة (احتفظ بالصور القديمة)
+formData.append('existing_images', JSON.stringify([
+  '/images/products/old_drill1.jpg',
+  '/images/products/old_drill2.jpg'
+]));
+
+// الصور الجديدة (Files من input)
+const fileInput = document.getElementById('new-images');
+if (fileInput.files.length > 0) {
+  for (let i = 0; i < fileInput.files.length; i++) {
+    formData.append(`new_images[${i}]`, fileInput.files[i]);
+  }
 }
+
+// الفيتشرز المحدثة (JSON string)
+formData.append('features', JSON.stringify([
+  'جودة ممتازة محدثة',
+  'ضمان 3 سنوات',
+  'مقاوم للماء والغبار',
+  'تقنية متطورة'
+]));
+
+// المواصفات المحدثة (JSON string)
+formData.append('specifications', JSON.stringify([
+  {"key": "الوزن", "value": "2.8 كيلو"},
+  {"key": "الأبعاد", "value": "35x25x18 سم"},
+  {"key": "القوة", "value": "900 واط"},
+  {"key": "الضمان", "value": "3 سنوات"}
+]));
+
+// الطلب
+const response = await fetch(`/api/v1/admin/products/${productId}`, {
+  method: 'POST', // ⚠️ POST وليس PUT!
+  headers: {
+    'Authorization': `Bearer ${adminToken}`
+    // ⚠️ لا تضع Content-Type! المتصفح سيعطيه تلقائياً مع boundary
+  },
+  body: formData
+});
 
 // Response
 {
@@ -3344,10 +3389,61 @@ PUT /admin/products/{product_id}
       "id": 8,
       "name_ar": "مثقاب كهربائي احترافي محدث",
       "name_en": "Updated Professional Electric Drill",
+      "description_ar": "مثقاب كهربائي قوي ومحدث للاستخدام المهني",
+      "description_en": "Updated powerful electric drill for professional use",
       "price": "420.00",
+      "original_price": "500.00",
       "stock": 30,
       "status": "active",
       "featured": false,
+      "images": [
+        "/images/products/old_drill1.jpg",
+        "/images/products/old_drill2.jpg",
+        "/images/products/1642248890_updated123.jpg",
+        "/images/products/1642248891_updated456.jpg"
+      ],
+      "sku": "PRD-1234567890-123",
+      "category": {
+        "id": 2,
+        "name": "الأدوات والمعدات"
+      },
+      "supplier": {
+        "id": 1,
+        "name": "شركة الأدوات المتقدمة"
+      },
+      "brand": {
+        "id": 1,
+        "name": "بوش"
+      },
+      "features": [
+        {
+          "id": 1,
+          "feature_ar": "جودة ممتازة محدثة",
+          "feature_en": "جودة ممتازة محدثة",
+          "sort_order": 1
+        },
+        {
+          "id": 2,
+          "feature_ar": "ضمان 3 سنوات",
+          "feature_en": "ضمان 3 سنوات",
+          "sort_order": 2
+        }
+      ],
+      "specifications": [
+        {
+          "id": 1,
+          "spec_key": "الوزن",
+          "spec_value_ar": "2.8 كيلو",
+          "spec_value_en": "2.8 كيلو"
+        },
+        {
+          "id": 2,
+          "spec_key": "القوة",
+          "spec_value_ar": "900 واط",
+          "spec_value_en": "900 واط"
+        }
+      ],
+      "created_at": "2024-01-15T10:30:00.000000Z",
       "updated_at": "2024-01-15T20:30:00.000000Z"
     }
   }
@@ -4879,4 +4975,13 @@ const RecentActivityWidget = ({ activities }) => {
 
 ---
 
-📅 **آخر تحديث**: تم إضافة Admin Dashboard APIs، Admin Products Management APIs، و Admin Categories Management APIs
+📅 **آخر تحديث**: إصلاح FormData Upload System للمنتجات - 25 ديسمبر 2024
+
+## 🆕 التحديثات الأخيرة
+- ✅ **إصلاح FormData Upload** - رفع الصور والملفات للمنتجات
+- ✅ **Admin Products APIs** - دعم كامل للـ multipart/form-data
+- ✅ **Product Features & Specifications** - إضافة وتحديث ديناميكي
+- ✅ **Method Spoofing** - POST مع _method=PUT للتحديث
+- ✅ **File Validation** - دعم JPEG,PNG,JPG,GIF,WebP (حتى 2MB)
+- ✅ **Database Transactions** - حماية البيانات أثناء العمليات المعقدة
+- ✅ **Error Handling** - رسائل خطأ واضحة ومفصلة
