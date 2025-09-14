@@ -21,10 +21,8 @@ class Product extends Model
         'description_ar',
         'description_en',
         'price',
-        'original_price',
+        'sale_price',
         'sku',
-        'rating',
-        'reviews_count',
         'category_id',
         'supplier_id',
         'brand_id',
@@ -41,10 +39,8 @@ class Product extends Model
      */
     protected $casts = [
         'price' => 'decimal:2',
-        'original_price' => 'decimal:2',
-        'rating' => 'decimal:2',
+        'sale_price' => 'decimal:2',
         'stock' => 'integer',
-        'reviews_count' => 'integer',
         'featured' => 'boolean',
         'images' => 'array',
         'created_at' => 'datetime',

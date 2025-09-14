@@ -1,0 +1,31 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#F3F4F6"/>
+  
+  <!-- Camera Icon -->
+  <g transform="translate(50, 50)">
+    <!-- Camera Body -->
+    <rect x="20" y="40" width="80" height="60" rx="8" fill="#9CA3AF"/>
+    
+    <!-- Lens -->
+    <circle cx="60" cy="70" r="20" fill="#6B7280"/>
+    <circle cx="60" cy="70" r="12" fill="#374151"/>
+    
+    <!-- Flash -->
+    <rect x="30" y="25" width="15" height="10" rx="2" fill="#9CA3AF"/>
+    
+    <!-- Viewfinder -->
+    <rect x="75" y="25" width="20" height="15" rx="2" fill="#9CA3AF"/>
+    
+    <!-- Lens Reflection -->
+    <circle cx="55" cy="65" r="4" fill="#D1D5DB" opacity="0.6"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="100" y="140" text-anchor="middle" fill="#6B7280" font-family="Arial, sans-serif" font-size="14">
+    لا توجد صورة
+  </text>
+  <text x="100" y="160" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="10">
+    No Image Available
+  </text>
+</svg> 

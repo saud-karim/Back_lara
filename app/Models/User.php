@@ -26,6 +26,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'role',
         'address',
         'phone',
+        'company',
+        'status',
+        'last_activity',
+        'avatar',
+        'registration_source',
     ];
 
     /**
@@ -45,6 +50,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'last_activity' => 'datetime',
     ];
 
     /**
@@ -111,12 +117,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(WishlistItem::class);
     }
 
-    /**
-     * Get the reviews for the user.
-     */
     public function reviews()
     {
-        return $this->hasMany(ProductReview::class);
+        return $this->hasMany(Review::class);
     }
 
     /**
@@ -125,6 +128,30 @@ class User extends Authenticatable implements MustVerifyEmail
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Get the customer activities for the user.
+     */
+    public function activities()
+    {
+        return $this->hasMany(CustomerActivity::class, 'customer_id');
+    }
+
+    /**
+     * Get the customer notes for the user.
+     */
+    public function customerNotes()
+    {
+        return $this->hasMany(CustomerNote::class, 'customer_id');
+    }
+
+    /**
+     * Get the admin notes created by the user.
+     */
+    public function adminNotes()
+    {
+        return $this->hasMany(CustomerNote::class, 'admin_id');
     }
 
     /**
@@ -149,5 +176,114 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isSupplier(): bool
     {
         return $this->role === 'supplier';
+    }
+
+    // Customer Management Scopes
+    public function scopeCustomers($query)
+    {
+        return $query->where('role', 'customer');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopeInactive($query)
+    {
+        return $query->where('status', 'inactive');
+    }
+
+    public function scopeBanned($query)
+    {
+        return $query->where('status', 'banned');
+    }
+
+    public function scopeWithOrders($query)
+    {
+        return $query->has('orders');
+    }
+
+    public function scopeWithoutOrders($query)
+    {
+        return $query->doesntHave('orders');
+    }
+
+    public function scopeRecentActivity($query, $days = 30)
+    {
+        return $query->where('last_activity', '>=', now()->subDays($days));
+    }
+
+    public function scopeNewThisMonth($query)
+    {
+        return $query->whereMonth('created_at', now()->month)
+                    ->whereYear('created_at', now()->year);
+    }
+
+    // Customer Management Helper Methods
+    public function updateLastActivity()
+    {
+        $this->update(['last_activity' => now()]);
+    }
+
+    public function getTotalSpentAttribute()
+    {
+        return $this->orders()
+                   ->where('status', 'completed')
+                   ->sum('total_amount');
+    }
+
+    public function getOrdersCountAttribute()
+    {
+        return $this->orders()->count();
+    }
+
+    public function getFavoritePaymentMethodAttribute()
+    {
+        // استخدم الـ method المحسنة من Payment model
+        return Payment::getFavoritePaymentMethod($this->id) ?? 'cash_on_delivery';
+    }
+
+    public function getAddressesCountAttribute()
+    {
+        return $this->addresses()->count();
+    }
+
+    public function hasRecentActivity($days = 30)
+    {
+        return $this->last_activity && $this->last_activity >= now()->subDays($days);
+    }
+
+    public function isVerified()
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    // Status management methods
+    public function activate($reason = null)
+    {
+        $this->update(['status' => 'active']);
+        CustomerActivity::logActivity($this->id, 'status_changed', [
+            'new_status' => 'active',
+            'reason' => $reason
+        ]);
+    }
+
+    public function deactivate($reason = null)
+    {
+        $this->update(['status' => 'inactive']);
+        CustomerActivity::logActivity($this->id, 'status_changed', [
+            'new_status' => 'inactive',
+            'reason' => $reason
+        ]);
+    }
+
+    public function ban($reason = null)
+    {
+        $this->update(['status' => 'banned']);
+        CustomerActivity::logActivity($this->id, 'status_changed', [
+            'new_status' => 'banned',
+            'reason' => $reason
+        ]);
     }
 }

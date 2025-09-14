@@ -13,6 +13,7 @@
 - [👨‍💼 Admin Dashboard APIs](#admin-dashboard-apis) - لوحة الإدارة
 - [📦 Admin Products APIs](#admin-products-apis) - إدارة المنتجات
 - [🏷️ Admin Categories APIs](#admin-categories-apis) - إدارة الفئات
+- [👥 Admin Customer Management APIs](#customer-management-apis) - **جديد!** إدارة العملاء الشاملة
 - [🛍️ Admin Products Management APIs](#admin-products-management-apis) - **جديد!** إدارة المنتجات المتقدمة
 - [📞 Contact APIs](#contact-apis) - رسائل التواصل
 - [🏷️ Brands APIs](#brands-apis) - العلامات التجارية
@@ -4958,10 +4959,13 @@ const RecentActivityWidget = ({ activities }) => {
 - ✅ **Admin Products APIs** - إدارة شاملة للمنتجات من لوحة الإدارة
 - ✅ **Admin Categories APIs** - إدارة شاملة للفئات مع إحصائيات ذكية
 - ✅ **Admin Products Management APIs** - **جديد!** إدارة شاملة للمنتجات مع CRUD كامل
+- ✅ **Admin Customer Management APIs** - **جديد!** إدارة العملاء الشاملة (8 APIs)
 - ✅ **Recent Activity Tracking** - تتبع الأنشطة الحديثة في النظام  
 - ✅ **Advanced Statistics** - إحصائيات متقدمة للمنتجات والطلبات والعملاء
 - ✅ **Real-time Updates** - تحديث تلقائي كل 5 دقائق
 - ✅ **Security Enhanced** - حماية شاملة بـ role-based access control
+- ✅ **Export & Notifications** - تصدير البيانات وإرسال الإشعارات
+- ✅ **Admin Review Management APIs** - **جديد!** إدارة المراجعات الشاملة (6 APIs)
 
 ### 🚀 للبدء السريع:
 1. **APIs الأساسية**: المنتجات، الفئات، المصادقة
@@ -4975,13 +4979,1392 @@ const RecentActivityWidget = ({ activities }) => {
 
 ---
 
-📅 **آخر تحديث**: إصلاح FormData Upload System للمنتجات - 25 ديسمبر 2024
+## 👥 Admin Customer Management APIs
 
-## 🆕 التحديثات الأخيرة
-- ✅ **إصلاح FormData Upload** - رفع الصور والملفات للمنتجات
-- ✅ **Admin Products APIs** - دعم كامل للـ multipart/form-data
-- ✅ **Product Features & Specifications** - إضافة وتحديث ديناميكي
-- ✅ **Method Spoofing** - POST مع _method=PUT للتحديث
-- ✅ **File Validation** - دعم JPEG,PNG,JPG,GIF,WebP (حتى 2MB)
-- ✅ **Database Transactions** - حماية البيانات أثناء العمليات المعقدة
-- ✅ **Error Handling** - رسائل خطأ واضحة ومفصلة
+### ⚠️ متطلبات الوصول
+جميع Admin Customer Management APIs تتطلب:
+- **Authentication**: `Authorization: Bearer {admin_token}`
+- **Role**: المستخدم يجب أن يكون `admin`
+- **Middleware**: محمية بـ `role:admin`
+
+### 1. إحصائيات العملاء
+```javascript
+GET /admin/customers/stats
+
+// Headers: Authorization: Bearer {admin_token}
+
+// Response
+{
+  "success": true,
+  "data": {
+    "total_customers": 1547,
+    "new_customers_this_month": 89,
+    "active_customers": 1342,
+    "inactive_customers": 127,
+    "banned_customers": 78,
+    "average_orders_per_customer": 3.2,
+    "top_spending_customers": 45,
+    "customers_with_zero_orders": 234,
+    "growth_percentage": 15.8,
+    "retention_rate": 68.5
+  }
+}
+```
+
+### 2. قائمة العملاء مع فلاتر متقدمة
+```javascript
+GET /admin/customers
+
+// Headers: Authorization: Bearer {admin_token}
+
+// Query Parameters (جميعها اختيارية):
+// - page: رقم الصفحة (افتراضي: 1)
+// - per_page: عدد العناصر (افتراضي: 15، حد أقصى: 50)
+// - search: البحث في الاسم، الإيميل، الهاتف
+// - status: active|inactive|banned
+// - company: البحث بالشركة
+// - registration_date_from: تاريخ التسجيل من (YYYY-MM-DD)
+// - registration_date_to: تاريخ التسجيل إلى (YYYY-MM-DD)
+// - min_orders: أقل عدد طلبات
+// - max_orders: أكبر عدد طلبات
+// - min_spent: أقل مبلغ مشتريات
+// - max_spent: أكبر مبلغ مشتريات
+// - sort: name|email|created_at|last_activity|orders_count|total_spent
+// - order: asc|desc
+
+// Response
+{
+  "success": true,
+  "data": [
+    {
+      "id": 15,
+      "name": "أحمد محمد علي",
+      "email": "ahmed@example.com",
+      "phone": "+201234567890",
+      "company": "شركة البناء المتقدم",
+      "avatar": "http://localhost:8000/storage/avatars/user15.jpg",
+      "status": "active",
+      "email_verified_at": "2024-01-15T10:30:00.000000Z",
+      "role": "customer",
+      "created_at": "2024-01-15T10:30:00.000000Z",
+      "last_activity": "2024-01-20T14:22:00.000000Z",
+      "orders_count": 8,
+      "total_spent": "2340.50",
+      "currency": "EGP",
+      "favorite_payment_method": "credit_card",
+      "addresses_count": 2,
+      "is_verified": true,
+      "has_recent_activity": true,
+      "registration_source": "website"
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "total": 1547,
+    "per_page": 15,
+    "last_page": 104
+  },
+  "links": {
+    "first": "http://localhost:8000/api/v1/admin/customers?page=1",
+    "last": "http://localhost:8000/api/v1/admin/customers?page=104",
+    "prev": null,
+    "next": "http://localhost:8000/api/v1/admin/customers?page=2"
+  }
+}
+```
+
+### 3. تفاصيل عميل محدد
+```javascript
+GET /admin/customers/{customer_id}
+
+// Headers: Authorization: Bearer {admin_token}
+
+// Response
+{
+  "success": true,
+  "data": {
+    "customer": {
+      "id": 15,
+      "name": "أحمد محمد علي",
+      "email": "ahmed@example.com",
+      "phone": "+201234567890",
+      "company": "شركة البناء المتقدم",
+      "avatar": "http://localhost:8000/storage/avatars/user15.jpg",
+      "status": "active",
+      "orders_count": 8,
+      "total_spent": "2340.50",
+      "currency": "EGP",
+      "is_verified": true
+    },
+    "statistics": {
+      "total_orders": 8,
+      "completed_orders": 6,
+      "pending_orders": 1,
+      "cancelled_orders": 1,
+      "total_spent": "2340.50",
+      "average_order_value": "292.56",
+      "first_order_date": "2024-01-16T09:00:00.000000Z",
+      "last_order_date": "2024-01-19T15:30:00.000000Z",
+      "favorite_category": "الأدوات والمعدات",
+      "favorite_products": [
+        {
+          "id": 8,
+          "name": "حديد تسليح ممتاز 10 مم",
+          "orders_count": 3
+        }
+      ]
+    },
+    "recent_orders": [
+      {
+        "id": "ORD-2024-156",
+        "order_number": "ORD-2024-156",
+        "status": "completed",
+        "total_amount": "485.75",
+        "items_count": 3,
+        "created_at": "2024-01-19T15:30:00.000000Z"
+      }
+    ],
+    "addresses": [
+      {
+        "id": 25,
+        "type": "home",
+        "name": "المنزل",
+        "city": "القاهرة",
+        "street": "شارع التحرير، المعادي",
+        "is_default": true
+      }
+    ]
+  }
+}
+```
+
+### 4. تحديث حالة العميل
+```javascript
+PATCH /admin/customers/{customer_id}/status
+
+// Headers: Authorization: Bearer {admin_token}
+
+// Request Body
+{
+  "status": "banned",  // active|inactive|banned
+  "reason": "مخالفة شروط الاستخدام"  // اختياري
+}
+
+// Response
+{
+  "success": true,
+  "message": "تم تحديث حالة العميل بنجاح",
+  "data": {
+    "customer": {
+      "id": 15,
+      "name": "أحمد محمد علي",
+      "status": "banned",
+      "updated_at": "2024-01-20T16:45:00.000000Z"
+    }
+  }
+}
+```
+
+### 5. إحصائيات أنشطة العملاء
+```javascript
+GET /admin/customers/activity-stats
+
+// Headers: Authorization: Bearer {admin_token}
+
+// Query Parameters:
+// - period: today|week|month|year (افتراضي: month)
+
+// Response
+{
+  "success": true,
+  "data": {
+    "period": "month",
+    "registrations_chart": [
+      {"date": "2024-01-01", "count": 12},
+      {"date": "2024-01-02", "count": 8},
+      {"date": "2024-01-03", "count": 15}
+    ],
+    "activity_breakdown": {
+      "highly_active": 234,    // أكثر من 5 طلبات
+      "moderately_active": 456, // 2-5 طلبات
+      "low_activity": 567,     // طلب واحد
+      "no_orders": 290         // بدون طلبات
+    },
+    "spending_segments": {
+      "high_spenders": 89,     // أكثر من 1000 ج.م
+      "medium_spenders": 345,  // 500-1000 ج.م
+      "low_spenders": 678,     // 100-500 ج.م
+      "minimal_spenders": 435  // أقل من 100 ج.م
+    }
+  }
+}
+```
+
+### 6. البحث المتقدم في العملاء
+```javascript
+POST /admin/customers/advanced-search
+
+// Headers: Authorization: Bearer {admin_token}
+
+// Request Body
+{
+  "filters": {
+    "name": "أحمد",
+    "email_domain": "gmail.com",
+    "registration_period": {
+      "from": "2024-01-01",
+      "to": "2024-01-31"
+    },
+    "orders_range": {
+      "min": 2,
+      "max": 10
+    },
+    "spending_range": {
+      "min": 500,
+      "max": 5000
+    },
+    "has_company": true,
+    "is_verified": true,
+    "last_activity_days": 30
+  },
+  "sort": "total_spent",
+  "order": "desc",
+  "page": 1,
+  "per_page": 20
+}
+
+// Response: نفس هيكل قائمة العملاء العادية
+```
+
+### 7. تصدير بيانات العملاء
+```javascript
+GET /admin/customers/export
+
+// Headers: Authorization: Bearer {admin_token}
+
+// Query Parameters:
+// - format: csv|excel|pdf (افتراضي: excel)
+// - جميع فلاتر قائمة العملاء العادية
+
+// Response
+{
+  "success": true,
+  "data": {
+    "download_url": "http://localhost:8000/storage/exports/customers_2024_01_20.xlsx",
+    "file_size": "2.4 MB",
+    "records_count": 1547,
+    "expires_at": "2024-01-21T16:45:00.000000Z"
+  }
+}
+```
+
+### 8. إرسال إشعارات للعملاء
+```javascript
+POST /admin/customers/send-notification
+
+// Headers: Authorization: Bearer {admin_token}
+
+// Request Body
+{
+  "customer_ids": [15, 23, 45], // أو ["all"] للجميع
+  "title": "عرض خاص لعملائنا المميزين",
+  "message": "احصل على خصم 20% على جميع المنتجات",
+  "type": "promotion", // info|warning|promotion|announcement
+  "send_email": true,
+  "send_sms": false
+}
+
+// Response
+{
+  "success": true,
+  "message": "تم إرسال الإشعار بنجاح",
+  "data": {
+    "notification_id": "NOTIF-2024-001",
+    "recipients_count": 3,
+    "email_sent": 3,
+    "sms_sent": 0,
+    "failed_count": 0
+  }
+}
+```
+
+### 🎯 مثال شامل للاستخدام في React
+
+```javascript
+// ===== Custom Hook لإدارة العملاء =====
+const useAdminCustomers = () => {
+  const [customers, setCustomers] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [activityStats, setActivityStats] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    page: 1,
+    per_page: 15,
+    search: '',
+    status: '',
+    sort: 'created_at',
+    order: 'desc'
+  });
+
+  const getAuthHeaders = () => ({
+    'Authorization': `Bearer ${localStorage.getItem('admin_token')}`,
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  });
+
+  // جلب إحصائيات العملاء
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/v1/admin/customers/stats', {
+        headers: getAuthHeaders()
+      });
+      const data = await response.json();
+      if (data.success) {
+        setStats(data.data);
+      }
+    } catch (error) {
+      console.error('خطأ في جلب الإحصائيات:', error);
+    }
+  };
+
+  // جلب قائمة العملاء
+  const fetchCustomers = async (newFilters = {}) => {
+    try {
+      setLoading(true);
+      const queryFilters = { ...filters, ...newFilters };
+      
+      const queryParams = new URLSearchParams();
+      Object.entries(queryFilters).forEach(([key, value]) => {
+        if (value) queryParams.append(key, value);
+      });
+
+      const response = await fetch(
+        `/api/v1/admin/customers?${queryParams}`,
+        { headers: getAuthHeaders() }
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        setCustomers(data.data);
+        setFilters(queryFilters);
+        return data;
+      }
+    } catch (error) {
+      console.error('خطأ في جلب العملاء:', error);
+      toast.error('حدث خطأ في جلب العملاء');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // جلب تفاصيل عميل
+  const fetchCustomerDetails = async (customerId) => {
+    try {
+      const response = await fetch(`/api/v1/admin/customers/${customerId}`, {
+        headers: getAuthHeaders()
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        return data.data;
+      }
+    } catch (error) {
+      console.error('خطأ في جلب تفاصيل العميل:', error);
+      toast.error('حدث خطأ في جلب تفاصيل العميل');
+    }
+  };
+
+  // تحديث حالة العميل
+  const updateCustomerStatus = async (customerId, status, reason = '') => {
+    try {
+      const response = await fetch(`/api/v1/admin/customers/${customerId}/status`, {
+        method: 'PATCH',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ status, reason })
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        // تحديث العميل في القائمة
+        setCustomers(prev => prev.map(customer => 
+          customer.id === customerId 
+            ? { ...customer, status: data.data.customer.status }
+            : customer
+        ));
+        toast.success(data.message);
+        return true;
+      }
+    } catch (error) {
+      console.error('خطأ في تحديث حالة العميل:', error);
+      toast.error('حدث خطأ في تحديث حالة العميل');
+    }
+    return false;
+  };
+
+  // البحث المتقدم
+  const advancedSearch = async (searchFilters) => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/v1/admin/customers/advanced-search', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(searchFilters)
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        setCustomers(data.data);
+        return data;
+      }
+    } catch (error) {
+      console.error('خطأ في البحث المتقدم:', error);
+      toast.error('حدث خطأ في البحث المتقدم');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // إرسال إشعار
+  const sendNotification = async (notificationData) => {
+    try {
+      const response = await fetch('/api/v1/admin/customers/send-notification', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(notificationData)
+      });
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success(data.message);
+        return data.data;
+      }
+    } catch (error) {
+      console.error('خطأ في إرسال الإشعار:', error);
+      toast.error('حدث خطأ في إرسال الإشعار');
+    }
+  };
+
+  // تصدير البيانات
+  const exportCustomers = async (format = 'excel', exportFilters = {}) => {
+    try {
+      const queryParams = new URLSearchParams({ format, ...exportFilters });
+      const response = await fetch(
+        `/api/v1/admin/customers/export?${queryParams}`,
+        { headers: getAuthHeaders() }
+      );
+      const data = await response.json();
+      
+      if (data.success) {
+        // فتح رابط التحميل
+        window.open(data.data.download_url, '_blank');
+        toast.success(`تم تصدير ${data.data.records_count} عميل بنجاح`);
+        return data.data;
+      }
+    } catch (error) {
+      console.error('خطأ في تصدير البيانات:', error);
+      toast.error('حدث خطأ في تصدير البيانات');
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+    fetchCustomers();
+  }, []);
+
+  return {
+    customers,
+    stats,
+    activityStats,
+    loading,
+    filters,
+    fetchCustomers,
+    fetchStats,
+    fetchCustomerDetails,
+    updateCustomerStatus,
+    advancedSearch,
+    sendNotification,
+    exportCustomers,
+    totalCustomers: stats?.total_customers || 0
+  };
+};
+
+// ===== مكون لوحة تحكم العملاء =====
+const AdminCustomersPage = () => {
+  const {
+    customers,
+    stats,
+    loading,
+    fetchCustomers,
+    updateCustomerStatus,
+    exportCustomers
+  } = useAdminCustomers();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [selectedCustomers, setSelectedCustomers] = useState([]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchCustomers({ search: searchTerm, page: 1 });
+  };
+
+  const handleStatusChange = async (customerId, newStatus, reason) => {
+    const success = await updateCustomerStatus(customerId, newStatus, reason);
+    if (success) {
+      // تحديث إضافي إذا لزم
+    }
+  };
+
+  const handleBulkExport = () => {
+    exportCustomers('excel', { status: statusFilter });
+  };
+
+  if (loading) return <div>جاري تحميل بيانات العملاء...</div>;
+
+  return (
+    <div className="admin-customers-page p-6 space-y-6">
+      {/* الإحصائيات */}
+      {stats && (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <StatCard
+            title="إجمالي العملاء"
+            value={stats.total_customers.toLocaleString()}
+            icon="👥"
+            color="blue"
+          />
+          <StatCard
+            title="عملاء نشطين"
+            value={stats.active_customers.toLocaleString()}
+            icon="✅"
+            color="green"
+          />
+          <StatCard
+            title="عملاء جدد هذا الشهر"
+            value={stats.new_customers_this_month}
+            icon="🆕"
+            color="purple"
+          />
+          <StatCard
+            title="معدل النمو"
+            value={`${stats.growth_percentage}%`}
+            icon="📈"
+            color={stats.growth_percentage > 0 ? 'green' : 'red'}
+          />
+          <StatCard
+            title="معدل الاحتفاظ"
+            value={`${stats.retention_rate}%`}
+            icon="🔄"
+            color="teal"
+          />
+        </div>
+      )}
+
+      {/* أدوات البحث والفلترة */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex flex-wrap gap-4 items-center justify-between">
+          <form onSubmit={handleSearch} className="flex">
+            <input
+              type="text"
+              placeholder="البحث في العملاء..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="px-4 py-2 border rounded-l-md w-64"
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600"
+            >
+              🔍
+            </button>
+          </form>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              fetchCustomers({ status: e.target.value, page: 1 });
+            }}
+            className="px-4 py-2 border rounded-md"
+          >
+            <option value="">جميع الحالات</option>
+            <option value="active">نشط</option>
+            <option value="inactive">غير نشط</option>
+            <option value="banned">محظور</option>
+          </select>
+
+          <button
+            onClick={handleBulkExport}
+            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+          >
+            📊 تصدير Excel
+          </button>
+        </div>
+      </div>
+
+      {/* جدول العملاء */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        <CustomersTable
+          customers={customers}
+          onStatusChange={handleStatusChange}
+          selectedCustomers={selectedCustomers}
+          onSelectionChange={setSelectedCustomers}
+        />
+      </div>
+    </div>
+  );
+};
+
+// ===== مكونات مساعدة =====
+const StatCard = ({ title, value, icon, color, urgent = false }) => (
+  <div className={`bg-white p-4 rounded-lg shadow border-l-4 ${
+    urgent ? 'border-red-500 bg-red-50' : `border-${color}-500`
+  }`}>
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm text-gray-600">{title}</p>
+        <p className={`text-xl font-bold ${
+          urgent ? 'text-red-700' : `text-${color}-700`
+        }`}>
+          {value}
+        </p>
+      </div>
+      <div className="text-2xl">{icon}</div>
+    </div>
+  </div>
+);
+
+const CustomersTable = ({ customers, onStatusChange, selectedCustomers, onSelectionChange }) => (
+  <div className="overflow-x-auto">
+    <table className="min-w-full divide-y divide-gray-200">
+      <thead className="bg-gray-50">
+        <tr>
+          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+            العميل
+          </th>
+          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+            الطلبات
+          </th>
+          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+            إجمالي المشتريات
+          </th>
+          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+            الحالة
+          </th>
+          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
+            الإجراءات
+          </th>
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-gray-200">
+        {customers.map((customer) => (
+          <tr key={customer.id} className="hover:bg-gray-50">
+            <td className="px-6 py-4">
+              <div className="flex items-center">
+                <img
+                  className="h-10 w-10 rounded-full"
+                  src={customer.avatar || '/default-avatar.png'}
+                  alt={customer.name}
+                />
+                <div className="mr-4">
+                  <div className="text-sm font-medium text-gray-900">
+                    {customer.name}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {customer.email}
+                  </div>
+                  {customer.company && (
+                    <div className="text-xs text-blue-600">
+                      {customer.company}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <span className="font-semibold">{customer.orders_count}</span>
+              {customer.has_recent_activity && (
+                <span className="mr-1 text-green-600">🟢</span>
+              )}
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <span className="font-semibold text-green-600">
+                {customer.total_spent} {customer.currency}
+              </span>
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap">
+              <StatusBadge
+                status={customer.status}
+                onStatusChange={(newStatus, reason) => 
+                  onStatusChange(customer.id, newStatus, reason)
+                }
+              />
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => router.push(`/admin/customers/${customer.id}`)}
+                  className="text-indigo-600 hover:text-indigo-900"
+                >
+                  عرض
+                </button>
+                <button
+                  onClick={() => handleSendNotification(customer.id)}
+                  className="text-blue-600 hover:text-blue-900"
+                >
+                  إشعار
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+const StatusBadge = ({ status, onStatusChange }) => {
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const statusConfig = {
+    active: { color: 'green', text: 'نشط', icon: '✅' },
+    inactive: { color: 'gray', text: 'غير نشط', icon: '⏸️' },
+    banned: { color: 'red', text: 'محظور', icon: '🚫' }
+  };
+
+  const config = statusConfig[status] || statusConfig.active;
+
+  const handleStatusChange = (newStatus) => {
+    const reason = newStatus === 'banned' 
+      ? prompt('سبب الحظر:')
+      : newStatus === 'inactive'
+      ? prompt('سبب إلغاء التفعيل:')
+      : '';
+
+    if (newStatus === 'banned' && !reason) return;
+
+    onStatusChange(newStatus, reason);
+    setShowDropdown(false);
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setShowDropdown(!showDropdown)}
+        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-${config.color}-100 text-${config.color}-800 hover:bg-${config.color}-200`}
+      >
+        <span className="mr-1">{config.icon}</span>
+        {config.text}
+      </button>
+
+      {showDropdown && (
+        <div className="absolute z-10 mt-2 w-32 bg-white rounded-md shadow-lg border">
+          <div className="py-1">
+            {Object.entries(statusConfig).map(([key, value]) => (
+              <button
+                key={key}
+                onClick={() => handleStatusChange(key)}
+                className={`w-full text-right px-4 py-2 text-sm hover:bg-gray-100 ${
+                  status === key ? 'bg-gray-50 font-medium' : ''
+                }`}
+              >
+                <span className="mr-2">{value.icon}</span>
+                {value.text}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+```
+
+### 💡 نصائح للاستخدام الأمثل
+
+```javascript
+// ===== تحسين الأداء مع React Query =====
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+const useCustomersWithQuery = (filters) => {
+  const queryClient = useQueryClient();
+
+  // جلب العملاء مع cache
+  const customersQuery = useQuery({
+    queryKey: ['admin-customers', filters],
+    queryFn: () => fetchCustomersAPI(filters),
+    staleTime: 5 * 60 * 1000, // 5 دقائق
+    cacheTime: 10 * 60 * 1000 // 10 دقائق
+  });
+
+  // تحديث حالة العميل مع optimistic updates
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ customerId, status, reason }) => 
+      updateCustomerStatusAPI(customerId, status, reason),
+    onMutate: async ({ customerId, status }) => {
+      // إيقاف refetch أثناء التحديث
+      await queryClient.cancelQueries(['admin-customers']);
+
+      // الحصول على البيانات السابقة
+      const previousCustomers = queryClient.getQueryData(['admin-customers', filters]);
+
+      // التحديث المتفائل
+      queryClient.setQueryData(['admin-customers', filters], old => ({
+        ...old,
+        data: old.data.map(customer =>
+          customer.id === customerId ? { ...customer, status } : customer
+        )
+      }));
+
+      return { previousCustomers };
+    },
+    onError: (err, variables, context) => {
+      // التراجع في حالة الخطأ
+      queryClient.setQueryData(['admin-customers', filters], context.previousCustomers);
+    },
+    onSettled: () => {
+      // إعادة جلب البيانات للتأكد من الصحة
+      queryClient.invalidateQueries(['admin-customers']);
+    }
+  });
+
+  return {
+    customers: customersQuery.data?.data || [],
+    loading: customersQuery.isLoading,
+    error: customersQuery.error,
+    updateStatus: updateStatusMutation.mutate,
+    updatingStatus: updateStatusMutation.isLoading
+  };
+};
+
+// ===== معالجة الأخطاء المتقدمة =====
+const handleCustomerError = (error, action) => {
+  if (error.response?.status === 403) {
+    toast.error('ليس لديك صلاحية لتنفيذ هذا الإجراء');
+    router.push('/admin/login');
+  } else if (error.response?.status === 404) {
+    toast.error('العميل غير موجود');
+  } else if (error.response?.status === 422) {
+    const validationErrors = error.response.data.errors;
+    Object.values(validationErrors).flat().forEach(message => {
+      toast.error(message);
+    });
+  } else {
+    toast.error(`حدث خطأ في ${action}`);
+  }
+};
+
+// ===== فلترة وبحث متقدم =====
+const useAdvancedCustomerFilters = () => {
+  const [filters, setFilters] = useState({
+    search: '',
+    status: '',
+    dateRange: { from: '', to: '' },
+    ordersRange: { min: '', max: '' },
+    spendingRange: { min: '', max: '' },
+    hasCompany: null,
+    isVerified: null
+  });
+
+  const applyFilters = useCallback((newFilters) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+  }, []);
+
+  const resetFilters = useCallback(() => {
+    setFilters({
+      search: '',
+      status: '',
+      dateRange: { from: '', to: '' },
+      ordersRange: { min: '', max: '' },
+      spendingRange: { min: '', max: '' },
+      hasCompany: null,
+      isVerified: null
+    });
+  }, []);
+
+  const buildQuery = useCallback(() => {
+    const query = {};
+    
+    if (filters.search) query.search = filters.search;
+    if (filters.status) query.status = filters.status;
+    if (filters.dateRange.from) query.registration_date_from = filters.dateRange.from;
+    if (filters.dateRange.to) query.registration_date_to = filters.dateRange.to;
+    if (filters.ordersRange.min) query.min_orders = filters.ordersRange.min;
+    if (filters.ordersRange.max) query.max_orders = filters.ordersRange.max;
+    if (filters.spendingRange.min) query.min_spent = filters.spendingRange.min;
+    if (filters.spendingRange.max) query.max_spent = filters.spendingRange.max;
+    
+    return query;
+  }, [filters]);
+
+  return {
+    filters,
+    applyFilters,
+    resetFilters,
+    buildQuery,
+    hasActiveFilters: Object.values(filters).some(v => 
+      v !== '' && v !== null && JSON.stringify(v) !== JSON.stringify({ from: '', to: '' })
+    )
+  };
+};
+
+// ===== مكون فلاتر متقدمة =====
+const AdvancedCustomerFilters = ({ onFiltersChange, onReset }) => {
+  const { filters, applyFilters, resetFilters, hasActiveFilters } = useAdvancedCustomerFilters();
+
+  const handleApply = () => {
+    onFiltersChange(filters);
+  };
+
+  const handleReset = () => {
+    resetFilters();
+    onReset();
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <h3 className="text-lg font-medium mb-4">فلاتر البحث المتقدم</h3>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        {/* البحث النصي */}
+        <div>
+          <label className="block text-sm font-medium mb-2">البحث</label>
+          <input
+            type="text"
+            placeholder="الاسم، الإيميل، أو الهاتف"
+            value={filters.search}
+            onChange={(e) => applyFilters({ search: e.target.value })}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+        </div>
+
+        {/* حالة العميل */}
+        <div>
+          <label className="block text-sm font-medium mb-2">الحالة</label>
+          <select
+            value={filters.status}
+            onChange={(e) => applyFilters({ status: e.target.value })}
+            className="w-full px-3 py-2 border rounded-md"
+          >
+            <option value="">جميع الحالات</option>
+            <option value="active">نشط</option>
+            <option value="inactive">غير نشط</option>
+            <option value="banned">محظور</option>
+          </select>
+        </div>
+
+        {/* نطاق التاريخ */}
+        <div>
+          <label className="block text-sm font-medium mb-2">تاريخ التسجيل</label>
+          <div className="flex gap-2">
+            <input
+              type="date"
+              value={filters.dateRange.from}
+              onChange={(e) => applyFilters({ 
+                dateRange: { ...filters.dateRange, from: e.target.value }
+              })}
+              className="flex-1 px-3 py-2 border rounded-md"
+            />
+            <input
+              type="date"
+              value={filters.dateRange.to}
+              onChange={(e) => applyFilters({ 
+                dateRange: { ...filters.dateRange, to: e.target.value }
+              })}
+              className="flex-1 px-3 py-2 border rounded-md"
+            />
+          </div>
+        </div>
+
+        {/* نطاق الطلبات */}
+        <div>
+          <label className="block text-sm font-medium mb-2">عدد الطلبات</label>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              placeholder="من"
+              value={filters.ordersRange.min}
+              onChange={(e) => applyFilters({ 
+                ordersRange: { ...filters.ordersRange, min: e.target.value }
+              })}
+              className="flex-1 px-3 py-2 border rounded-md"
+            />
+            <input
+              type="number"
+              placeholder="إلى"
+              value={filters.ordersRange.max}
+              onChange={(e) => applyFilters({ 
+                ordersRange: { ...filters.ordersRange, max: e.target.value }
+              })}
+              className="flex-1 px-3 py-2 border rounded-md"
+            />
+          </div>
+        </div>
+
+        {/* نطاق الإنفاق */}
+        <div>
+          <label className="block text-sm font-medium mb-2">إجمالي المشتريات (ج.م)</label>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              placeholder="من"
+              value={filters.spendingRange.min}
+              onChange={(e) => applyFilters({ 
+                spendingRange: { ...filters.spendingRange, min: e.target.value }
+              })}
+              className="flex-1 px-3 py-2 border rounded-md"
+            />
+            <input
+              type="number"
+              placeholder="إلى"
+              value={filters.spendingRange.max}
+              onChange={(e) => applyFilters({ 
+                spendingRange: { ...filters.spendingRange, max: e.target.value }
+              })}
+              className="flex-1 px-3 py-2 border rounded-md"
+            />
+          </div>
+        </div>
+
+        {/* خيارات إضافية */}
+        <div>
+          <label className="block text-sm font-medium mb-2">خيارات إضافية</label>
+          <div className="space-y-2">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={filters.hasCompany === true}
+                onChange={(e) => applyFilters({ 
+                  hasCompany: e.target.checked ? true : null 
+                })}
+                className="mr-2"
+              />
+              لديه شركة
+            </label>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={filters.isVerified === true}
+                onChange={(e) => applyFilters({ 
+                  isVerified: e.target.checked ? true : null 
+                })}
+                className="mr-2"
+              />
+              حساب مفعل
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-2">
+        <button
+          onClick={handleApply}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          تطبيق الفلاتر
+        </button>
+        {hasActiveFilters && (
+          <button
+            onClick={handleReset}
+            className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+          >
+            إعادة تعيين
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+```
+
+### ✅ الخلاصة
+
+**🎉 تم تطبيق Customer Management APIs بنجاح!**
+
+- ✅ **8 APIs كاملة** مع جميع الفلاتر والإحصائيات
+- ✅ **React Integration** جاهزة للاستخدام الفوري  
+- ✅ **Advanced Search** مع فلاتر متقدمة
+- ✅ **Real-time Updates** مع optimistic updates
+- ✅ **Export Functionality** للـ Excel/CSV/PDF
+- ✅ **Notification System** لإرسال إشعارات
+- ✅ **Security** محمية بـ admin middleware
+- ✅ **Performance** محسنة مع React Query
+
+**🚀 جاهزة لبناء صفحة `/dashboard/customers` الاحترافية!**
+
+---
+
+📅 **آخر تحديث**: إضافة Customer Management APIs الشاملة - 9 سبتمبر 2025
+
+## 🆕 التحديثات الأخيرة - إصلاح مشكلة رفع الصور
+
+### 🚀 **ما تم إصلاحه:**
+
+#### 1. **إصلاح ProductController (المشكلة الرئيسية)**
+```php
+// الإصلاح الرئيسي: دعم images.* للإنشاء + new_images.* للتحديث
+'images' => 'nullable|array|max:5',
+'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+
+// إصلاح تخزين الصور: استخدام Laravel Storage بدلاً من public_path
+$path = $file->storeAs('products', $filename, 'public');
+$allImages[] = '/storage/' . $path;
+
+// إصلاح حفظ البيانات: إزالة json_encode الزائد
+$product->update(['images' => $allImages]);
+```
+
+#### 2. **إصلاح Routes للـ FormData**
+```php
+// إضافة route POST للتحديث مع FormData support
+Route::post('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.products.update.formdata');
+```
+
+#### 3. **إصلاح Models (ProductFeature & ProductSpecification)**
+```php
+// ProductFeature - تحديث fillable
+protected $fillable = ['product_id', 'feature', 'sort_order'];
+
+// ProductSpecification - تحديث fillable  
+protected $fillable = ['product_id', 'spec_key', 'spec_value'];
+```
+
+#### 4. **تطبيق Laravel Storage Link**
+```bash
+php artisan storage:link
+# النتيجة: /storage/products/filename.jpg بدلاً من placeholder
+```
+
+#### 5. **إصلاح عرض Features & Specifications**
+```php
+// في show method - عرض البيانات الفعلية بدلاً من array فارغ
+'features' => $product->features->pluck('feature')->toArray(),
+'specifications' => $product->specifications->map(function($spec) {
+    return ['key' => $spec->spec_key, 'value' => $spec->spec_value];
+})->toArray(),
+```
+
+---
+
+### 🎯 **API Endpoints المُحدثة:**
+
+#### **إنشاء منتج جديد مع صور (FormData)**
+```javascript
+POST /api/v1/admin/products
+Content-Type: multipart/form-data
+
+// استخدام FormData
+const formData = new FormData();
+formData.append('name_ar', 'منتج تجريبي');
+formData.append('name_en', 'Test Product');
+formData.append('description_ar', 'وصف المنتج');
+formData.append('description_en', 'Product description');
+formData.append('price', '100.50');
+formData.append('stock', '50');
+formData.append('category_id', '1');
+formData.append('supplier_id', '1');
+formData.append('status', 'active');
+formData.append('featured', 'true');
+
+// رفع الصور - المفتاح الجديد
+formData.append('images[0]', fileInput.files[0]);
+formData.append('images[1]', fileInput.files[1]);
+
+// البيانات الإضافية
+formData.append('features', JSON.stringify(['ميزة رائعة', 'جودة عالية']));
+formData.append('specifications', JSON.stringify([
+  {"key": "الوزن", "value": "2 كيلو"},
+  {"key": "اللون", "value": "أزرق"}
+]));
+
+// Response - الصور تعمل الآن!
+{
+  "success": true,
+  "message": "تم إنشاء المنتج بنجاح",
+  "data": {
+    "product": {
+      "id": 56,
+      "images": [
+        "/storage/products/1735734567_abc123.jpg",
+        "/storage/products/1735734568_def456.jpg"
+      ],
+      "features": [
+        {"id": 1, "feature": "ميزة رائعة", "sort_order": 1},
+        {"id": 2, "feature": "جودة عالية", "sort_order": 2}
+      ],
+      "specifications": [
+        {"id": 1, "spec_key": "الوزن", "spec_value": "2 كيلو"},
+        {"id": 2, "spec_key": "اللون", "spec_value": "أزرق"}
+      ]
+    }
+  }
+}
+```
+
+#### **تحديث منتج مع صور جديدة (FormData)**
+```javascript
+POST /api/v1/admin/products/{id}  // ⚠️ POST وليس PUT!
+Content-Type: multipart/form-data
+
+const formData = new FormData();
+// البيانات الأساسية...
+formData.append('name_ar', 'منتج محدث');
+
+// الصور الموجودة (للاحتفاظ بها)
+formData.append('existing_images', JSON.stringify([
+  '/storage/products/old_image1.jpg',
+  '/storage/products/old_image2.jpg'
+]));
+
+// الصور الجديدة (ستضاف للموجودة)
+formData.append('new_images[0]', newFileInput.files[0]);
+formData.append('new_images[1]', newFileInput.files[1]);
+
+// Response - مزج الصور القديمة والجديدة
+{
+  "success": true,
+  "message": "تم تحديث المنتج بنجاح",
+  "data": {
+    "product": {
+      "images": [
+        "/storage/products/old_image1.jpg",       // صور قديمة محفوظة
+        "/storage/products/old_image2.jpg",       // صور قديمة محفوظة  
+        "/storage/products/1735734890_new1.jpg",  // صور جديدة
+        "/storage/products/1735734891_new2.jpg"   // صور جديدة
+      ]
+    }
+  }
+}
+```
+
+---
+
+### 🛠️ **مثال عملي للاستخدام في React:**
+
+```javascript
+// ✅ مثال كامل يعمل 100%
+const uploadProductWithImages = async (productData, imageFiles) => {
+  try {
+    const formData = new FormData();
+    
+    // البيانات الأساسية
+    Object.keys(productData).forEach(key => {
+      if (key !== 'images' && productData[key] !== null) {
+        formData.append(key, productData[key]);
+      }
+    });
+    
+    // رفع الصور
+    if (imageFiles && imageFiles.length > 0) {
+      imageFiles.forEach((file, index) => {
+        formData.append(`images[${index}]`, file);
+      });
+    }
+    
+    // البيانات الإضافية كـ JSON
+    if (productData.features) {
+      formData.append('features', JSON.stringify(productData.features));
+    }
+    if (productData.specifications) {
+      formData.append('specifications', JSON.stringify(productData.specifications));
+    }
+    
+    const response = await fetch('/api/v1/admin/products', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getAdminToken()}`,
+        'Accept': 'application/json'
+        // ⚠️ لا تضع Content-Type! المتصفح سيضعه تلقائياً مع boundary
+      },
+      body: formData
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      toast.success(result.message);
+      return result.data.product;
+    } else {
+      throw new Error(result.message);
+    }
+    
+  } catch (error) {
+    console.error('خطأ في رفع المنتج:', error);
+    toast.error('حدث خطأ في رفع المنتج');
+    throw error;
+  }
+};
+
+// الاستخدام
+const handleSubmit = async (formData, imageFiles) => {
+  const product = await uploadProductWithImages(formData, imageFiles);
+  router.push(`/admin/products/${product.id}`);
+};
+```
+
+---
+
+### 📁 **مسارات الصور الجديدة:**
+
+```bash
+# المسار الفعلي للتخزين
+storage/app/public/products/1735734567_abc123.jpg
+
+# الرابط للوصول من المتصفح  
+http://localhost:8000/storage/products/1735734567_abc123.jpg
+
+# الرابط المحفوظ في قاعدة البيانات
+/storage/products/1735734567_abc123.jpg
+```
+
+---
+
+### ✅ **النتائج:**
+
+| المشكلة القديمة | الحل الجديد | النتيجة |
+|----------------|------------|---------|
+| ❌ 422 Validation Error | ✅ دعم كامل للـ FormData | رفع ناجح |
+| ❌ Placeholder Images | ✅ مسارات صحيحة `/storage/` | صور تظهر |
+| ❌ Features فارغة | ✅ حفظ وعرض صحيح | بيانات كاملة |
+| ❌ مسارات خاطئة | ✅ Laravel Storage Link | روابط تعمل |
+| ❌ JSON vs FormData تعارض | ✅ دعم كلاهما | مرونة كاملة |
+
+---
+
+### 🧪 **اختبار سريع:**
+
+```bash
+# اختبار رفع منتج مع صور
+curl -X POST http://localhost:8000/api/v1/admin/products \
+  -H "Authorization: Bearer YOUR_ADMIN_TOKEN" \
+  -H "Accept: application/json" \
+  -F "name_ar=منتج تجريبي" \
+  -F "name_en=Test Product" \
+  -F "description_ar=وصف تجريبي" \
+  -F "description_en=Test description" \
+  -F "price=100" \
+  -F "stock=50" \
+  -F "category_id=1" \
+  -F "supplier_id=1" \
+  -F "status=active" \
+  -F "featured=true" \
+  -F "images[]=@test_image1.jpg" \
+  -F "images[]=@test_image2.jpg" \
+  -F "features=[\"ميزة رائعة\",\"جودة عالية\"]" \
+  -F "specifications=[{\"key\":\"الوزن\",\"value\":\"2 كيلو\"}]"
+
+# النتيجة المتوقعة: 201 Created مع بيانات المنتج والصور
+```
+
+---
+
+### 🎯 **الخلاصة:**
+**✅ تم حل مشكلة رفع الصور بالكامل!**
+
+- **Frontend**: يرسل FormData مع الصور ✅
+- **Backend**: يستقبل ويعالج الصور بنجاح ✅  
+- **Storage**: يحفظ في المكان الصحيح ✅
+- **Display**: الصور تظهر في الواجهة ✅
+- **Database**: Features & Specifications تحفظ صحيحة ✅
+
+**🚀 النظام جاهز للاستخدام الفوري!**

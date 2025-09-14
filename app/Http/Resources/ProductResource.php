@@ -22,7 +22,7 @@ class ProductResource extends JsonResource
             'name' => $lang === 'ar' ? ($this->name_ar ?: $this->name_en) : ($this->name_en ?: $this->name_ar),
             'description' => $lang === 'ar' ? ($this->description_ar ?: $this->description_en) : ($this->description_en ?: $this->description_ar),
             'price' => $this->price,
-            'original_price' => $this->original_price,
+            'sale_price' => $this->sale_price,
             'rating' => $this->rating,
             'reviews_count' => $this->reviews_count,
             'stock' => $this->stock,

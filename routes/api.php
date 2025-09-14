@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Api\AdminCustomerController;
+use App\Http\Controllers\Api\AdminReviewController;
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BrandController;
@@ -159,6 +161,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
             Route::post('/', [AdminProductController::class, 'store'])->name('admin.products.store');
             Route::get('/{id}', [AdminProductController::class, 'show'])->name('admin.products.show');
             Route::put('/{id}', [AdminProductController::class, 'update'])->name('admin.products.update');
+            Route::post('/{id}', [AdminProductController::class, 'update'])->name('admin.products.update.formdata'); // For FormData updates
             Route::patch('/{id}/toggle-status', [AdminProductController::class, 'toggleStatus'])->name('admin.products.toggle-status');
             Route::patch('/{id}/toggle-featured', [AdminProductController::class, 'toggleFeatured'])->name('admin.products.toggle-featured');
             Route::delete('/{id}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy');
@@ -173,6 +176,18 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
             Route::put('/{id}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
             Route::patch('/{id}/toggle-status', [AdminCategoryController::class, 'toggleStatus'])->name('admin.categories.toggle-status');
             Route::delete('/{id}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+        });
+
+        // Admin Customers Management routes
+        Route::prefix('customers')->group(function () {
+            Route::get('/stats', [AdminCustomerController::class, 'stats'])->name('admin.customers.stats');
+            Route::get('/activity-stats', [AdminCustomerController::class, 'activityStats'])->name('admin.customers.activity-stats');
+            Route::get('/export', [AdminCustomerController::class, 'export'])->name('admin.customers.export');
+            Route::post('/advanced-search', [AdminCustomerController::class, 'advancedSearch'])->name('admin.customers.advanced-search');
+            Route::post('/send-notification', [AdminCustomerController::class, 'sendNotification'])->name('admin.customers.send-notification');
+            Route::get('/', [AdminCustomerController::class, 'index'])->name('admin.customers.index');
+            Route::get('/{id}', [AdminCustomerController::class, 'show'])->name('admin.customers.show');
+            Route::patch('/{id}/status', [AdminCustomerController::class, 'updateStatus'])->name('admin.customers.update-status');
         });
     });
 
@@ -262,5 +277,15 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::get('/profile', [SupplierController::class, 'profile'])->name('supplier.profile');
         Route::put('/profile', [SupplierController::class, 'updateProfile'])->name('supplier.profile.update');
         Route::post('/certifications', [SupplierController::class, 'uploadCertifications'])->name('supplier.certifications');
+    });
+
+    // Admin Review Management routes
+    Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin/reviews')->group(function () {
+        Route::get('/stats', [AdminReviewController::class, 'stats'])->name('admin.reviews.stats');
+        Route::get('/analytics', [AdminReviewController::class, 'analytics'])->name('admin.reviews.analytics');
+        Route::get('/', [AdminReviewController::class, 'index'])->name('admin.reviews.index');
+        Route::get('/{id}', [AdminReviewController::class, 'show'])->name('admin.reviews.show');
+        Route::put('/{id}/status', [AdminReviewController::class, 'updateStatus'])->name('admin.reviews.updateStatus');
+        Route::post('/bulk', [AdminReviewController::class, 'bulk'])->name('admin.reviews.bulk');
     });
 });

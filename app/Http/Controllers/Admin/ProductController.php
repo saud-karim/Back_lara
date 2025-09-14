@@ -90,9 +90,8 @@ class ProductController extends Controller
                 'name' => $lang === 'ar' ? $product->name_ar : $product->name_en,
                 'description' => $lang === 'ar' ? $product->description_ar : $product->description_en,
                 'price' => $product->price,
-                'original_price' => $product->original_price,
-                'rating' => $product->rating,
-                'reviews_count' => $product->reviews_count,
+                'sale_price' => $product->sale_price,
+
                 'stock' => $product->stock,
                 'status' => $product->status,
                 'featured' => $product->featured,
@@ -181,15 +180,16 @@ class ProductController extends Controller
             'description_ar' => $product->description_ar,
             'description_en' => $product->description_en,
             'description' => $lang === 'ar' ? $product->description_ar : $product->description_en,
-            'price' => $product->price,
-            'original_price' => $product->original_price,
-            'stock' => $product->stock,
+            'price' => (float) $product->price,
+            'sale_price' => $product->sale_price ? (float) $product->sale_price : null,
+            'stock' => (int) $product->stock,
             'sku' => $product->sku,
-            'rating' => $product->rating,
-            'reviews_count' => $product->reviews_count,
+            'weight' => $product->weight ? (float) $product->weight : null,
+            'dimensions' => is_string($product->dimensions) ? json_decode($product->dimensions, true) : $product->dimensions,
+            'sort_order' => (int) $product->sort_order,
             'status' => $product->status,
-            'featured' => $product->featured,
-            'images' => $product->images ?? [],
+            'featured' => (bool) $product->featured,
+            'images' => is_string($product->images) ? json_decode($product->images, true) : ($product->images ?? []),
             'category_id' => $product->category_id,
             'supplier_id' => $product->supplier_id,
             'brand_id' => $product->brand_id,
@@ -205,8 +205,8 @@ class ProductController extends Controller
                 'id' => $product->brand->id,
                 'name' => $lang === 'ar' ? $product->brand->name_ar : $product->brand->name_en
             ] : null,
-            'features' => [], // TODO: Add when ProductFeature model is created
-            'specifications' => [], // TODO: Add when ProductSpecification model is created
+            'features' => is_string($product->features) ? json_decode($product->features, true) : ($product->features ?? []),
+            'specifications' => is_string($product->specifications) ? json_decode($product->specifications, true) : ($product->specifications ?? []),
             'is_in_stock' => $product->stock > 0,
             'has_low_stock' => $product->stock <= 10 && $product->stock > 0,
             'created_at' => $product->created_at,
@@ -232,7 +232,7 @@ class ProductController extends Controller
             'description_ar' => 'required|string',
             'description_en' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'original_price' => 'nullable|numeric|min:0',
+            'sale_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
             'supplier_id' => 'required|exists:suppliers,id',
@@ -240,7 +240,11 @@ class ProductController extends Controller
             'status' => 'required|in:active,inactive',
             'featured' => 'boolean',
             
-            // الصور الجديدة
+            // الصور - للإنشاء الجديد
+            'images' => 'nullable|array|max:5',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            
+            // الصور الجديدة - للتحديث
             'new_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             
             // الصور الموجودة والبيانات الإضافية
@@ -266,7 +270,7 @@ class ProductController extends Controller
                 'description_ar' => $request->description_ar,
                 'description_en' => $request->description_en,
                 'price' => $request->price,
-                'original_price' => $request->original_price,
+                'sale_price' => $request->sale_price,
                 'stock' => $request->stock,
                 'category_id' => $request->category_id,
                 'supplier_id' => $request->supplier_id,
@@ -282,7 +286,7 @@ class ProductController extends Controller
             // معالجة الصور
             $allImages = [];
             
-            // الصور الموجودة
+            // الصور الموجودة (للتحديث)
             if ($request->existing_images) {
                 $existingImages = json_decode($request->existing_images, true);
                 if (is_array($existingImages)) {
@@ -290,19 +294,30 @@ class ProductController extends Controller
                 }
             }
 
-            // رفع الصور الجديدة
+            // رفع الصور الجديدة للإنشاء
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $file) {
+                    if ($file && $file->isValid()) {
+                        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                        $path = $file->storeAs('products', $filename, 'public');
+                        $allImages[] = '/storage/' . $path;
+                    }
+                }
+            }
+
+            // رفع الصور الجديدة للتحديث
             if ($request->hasFile('new_images')) {
                 foreach ($request->file('new_images') as $file) {
                     if ($file && $file->isValid()) {
                         $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                        $file->move(public_path('images/products'), $filename);
-                        $allImages[] = '/images/products/' . $filename;
+                        $path = $file->storeAs('products', $filename, 'public');
+                        $allImages[] = '/storage/' . $path;
                     }
                 }
             }
 
             // حفظ الصور في قاعدة البيانات
-            $product->update(['images' => json_encode($allImages)]);
+            $product->update(['images' => $allImages]);
 
             // معالجة الفيتشرز
             if ($request->features) {
@@ -311,8 +326,7 @@ class ProductController extends Controller
                     foreach ($features as $index => $feature) {
                         ProductFeature::create([
                             'product_id' => $product->id,
-                            'feature_ar' => $feature,
-                            'feature_en' => $feature,
+                            'feature' => $feature,
                             'sort_order' => $index + 1
                         ]);
                     }
@@ -328,8 +342,7 @@ class ProductController extends Controller
                             ProductSpecification::create([
                                 'product_id' => $product->id,
                                 'spec_key' => $spec['key'],
-                                'spec_value_ar' => $spec['value'],
-                                'spec_value_en' => $spec['value']
+                                'spec_value' => $spec['value']
                             ]);
                         }
                     }
@@ -376,7 +389,7 @@ class ProductController extends Controller
             'description_ar' => 'required|string',
             'description_en' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'original_price' => 'nullable|numeric|min:0',
+            'sale_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'category_id' => 'required|exists:categories,id',
             'supplier_id' => 'required|exists:suppliers,id',
@@ -410,7 +423,7 @@ class ProductController extends Controller
                 'description_ar' => $request->description_ar,
                 'description_en' => $request->description_en,
                 'price' => $request->price,
-                'original_price' => $request->original_price,
+                'sale_price' => $request->sale_price,
                 'stock' => $request->stock,
                 'category_id' => $request->category_id,
                 'supplier_id' => $request->supplier_id,
@@ -435,14 +448,14 @@ class ProductController extends Controller
                 foreach ($request->file('new_images') as $file) {
                     if ($file && $file->isValid()) {
                         $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                        $file->move(public_path('images/products'), $filename);
-                        $allImages[] = '/images/products/' . $filename;
+                        $path = $file->storeAs('products', $filename, 'public');
+                        $allImages[] = '/storage/' . $path;
                     }
                 }
             }
 
             // حفظ الصور في قاعدة البيانات
-            $product->update(['images' => json_encode($allImages)]);
+            $product->update(['images' => $allImages]);
 
             // تحديث الفيتشرز (حذف القديمة وإضافة الجديدة)
             $product->features()->delete();
@@ -452,8 +465,7 @@ class ProductController extends Controller
                     foreach ($features as $index => $feature) {
                         ProductFeature::create([
                             'product_id' => $product->id,
-                            'feature_ar' => $feature,
-                            'feature_en' => $feature,
+                            'feature' => $feature,
                             'sort_order' => $index + 1
                         ]);
                     }
@@ -470,8 +482,7 @@ class ProductController extends Controller
                             ProductSpecification::create([
                                 'product_id' => $product->id,
                                 'spec_key' => $spec['key'],
-                                'spec_value_ar' => $spec['value'],
-                                'spec_value_en' => $spec['value']
+                                'spec_value' => $spec['value']
                             ]);
                         }
                     }

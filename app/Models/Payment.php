@@ -141,4 +141,28 @@ class Payment extends Model
 
         return $statuses[$this->status] ?? $this->status;
     }
+
+    // Method للحصول على favorite payment method لمستخدم محدد
+    public static function getFavoritePaymentMethod($userId)
+    {
+        return self::join('orders', 'payments.order_id', '=', 'orders.id')
+            ->where('orders.user_id', $userId)
+            ->whereNotNull('payments.method')        // استخدم method الصحيح
+            ->groupBy('payments.method')             
+            ->orderByRaw('COUNT(*) DESC')
+            ->pluck('payments.method')               
+            ->first();
+    }
+
+    // Accessor للتوافق مع payment_method
+    public function getPaymentMethodAttribute()
+    {
+        return $this->method;  // إرجاع قيمة العمود الحقيقي
+    }
+
+    // Mutator للتوافق مع payment_method (اختياري)
+    public function setPaymentMethodAttribute($value)
+    {
+        $this->attributes['method'] = $value;
+    }
 } 
