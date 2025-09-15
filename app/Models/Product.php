@@ -181,4 +181,47 @@ class Product extends Model
     {
         return $this->hasMany(ProductSpecification::class);
     }
+
+    /**
+     * Calculate average rating for this product
+     */
+    public function calculateAverageRating()
+    {
+        try {
+            // Try to get reviews from Review model (new system)
+            if (class_exists('\App\Models\Review')) {
+                $reviews = \App\Models\Review::where('product_id', $this->id)->where('status', 'approved');
+                if ($reviews->count() > 0) {
+                    return round($reviews->avg('rating'), 1);
+                }
+            }
+            
+            // Fallback to ProductReview model (old system)
+            if ($this->reviews()->count() > 0) {
+                return round($this->reviews()->avg('rating'), 1);
+            }
+            
+            return 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Get reviews count for this product
+     */
+    public function getReviewsCount()
+    {
+        try {
+            // Try to get reviews from Review model (new system)
+            if (class_exists('\App\Models\Review')) {
+                return \App\Models\Review::where('product_id', $this->id)->where('status', 'approved')->count();
+            }
+            
+            // Fallback to ProductReview model (old system)
+            return $this->reviews()->count();
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 } 

@@ -70,6 +70,15 @@ class ProductRepository
             $query->where('stock', '>', 0);
         }
 
+        // Handle featured filter - convert string 'true'/'false' to boolean
+        if (isset($filters['featured'])) {
+            $featuredValue = $filters['featured'];
+            if (is_string($featuredValue)) {
+                $featuredValue = strtolower($featuredValue) === 'true' || $featuredValue === '1';
+            }
+            $query->where('featured', $featuredValue);
+        }
+
         $sortBy = $filters['sort_by'] ?? 'created_at';
         $sortOrder = $filters['sort_order'] ?? 'desc';
         $query->orderBy($sortBy, $sortOrder);
@@ -91,8 +100,13 @@ class ProductRepository
     public function search(string $query): LengthAwarePaginator
     {
         return Product::with(['category', 'supplier'])
-            ->where('name', 'like', '%' . $query . '%')
-            ->orWhere('description', 'like', '%' . $query . '%')
+            ->where(function($q) use ($query) {
+                $q->where('name_ar', 'like', '%' . $query . '%')
+                  ->orWhere('name_en', 'like', '%' . $query . '%')
+                  ->orWhere('description_ar', 'like', '%' . $query . '%')
+                  ->orWhere('description_en', 'like', '%' . $query . '%')
+                  ->orWhere('sku', 'like', '%' . $query . '%');
+            })
             ->paginate(15);
     }
 

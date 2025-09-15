@@ -77,14 +77,7 @@ class TranslatedDataSeeder extends Seeder
                 'description_en' => 'Specialists in supplying high-quality building materials, cement, and steel for infrastructure projects',
                 'email' => 'info@modern-construction.com',
                 'phone' => '+201234567891',
-                'address' => 'المنطقة الصناعية، الإسكندرية، مصر',
-                'website' => 'https://www.modern-construction.com',
-                'rating' => 4.5,
-                'total_reviews' => 180,
-                'verified' => true,
-                'established_year' => 2005,
-                'certifications' => json_encode(['ISO 9001:2008', 'Quality Assurance Certificate']),
-                'contract_details' => json_encode(['bulk_supplier' => true, 'payment_terms' => '15_days']),
+                'address' => 'المنطقة الصناعية، الإسكندرية، مصر','certifications' => json_encode(['ISO 9001:2008', 'Quality Assurance Certificate']),'payment_terms' => '15_days']),
                 'status' => 'active'
             ],
             [
@@ -94,14 +87,7 @@ class TranslatedDataSeeder extends Seeder
                 'description_en' => 'We provide the latest engineering equipment and specialized machinery for infrastructure and industrial projects',
                 'email' => 'contact@engequipment.com',
                 'phone' => '+201234567892',
-                'address' => 'مدينة نصر، القاهرة، مصر',
-                'website' => 'https://www.engequipment.com',
-                'rating' => 4.7,
-                'total_reviews' => 156,
-                'verified' => true,
-                'established_year' => 2012,
-                'certifications' => json_encode(['CE Marking', 'ISO 14001:2015']),
-                'contract_details' => json_encode(['technical_support' => true, 'warranty_provider' => true]),
+                'address' => 'مدينة نصر، القاهرة، مصر','certifications' => json_encode(['CE Marking', 'ISO 14001:2015']),'warranty_provider' => true]),
                 'status' => 'active'
             ]
         ];
@@ -175,13 +161,8 @@ class TranslatedDataSeeder extends Seeder
                 'description_ar' => 'مثقاب كهربائي لاسلكي احترافي مع بطارية ليثيوم أيون 12 فولت. مثالي لجميع أعمال الثقب والبراغي في المواد المختلفة مثل الخشب والمعدن والبلاستيك.',
                 'description_en' => 'Professional cordless drill with 12V lithium-ion battery. Perfect for all drilling and screwing tasks in various materials like wood, metal, and plastic.',
                 'category_id' => 'power-tools',
-                'price' => 299.99,
-                'original_price' => 349.99,
-                'stock' => 50,
-                'sku' => 'BSH-GSB120-001',
-                'rating' => 4.8,
-                'reviews_count' => 127,
-                'status' => 'active',
+                'price' => 299.99,'stock' => 50,
+                'sku' => 'BSH-GSB120-001','status' => 'active',
                 'featured' => true,
                 'supplier_id' => 1,
                 'brand_id' => $brandBosch?->id,
@@ -197,13 +178,8 @@ class TranslatedDataSeeder extends Seeder
                 'description_ar' => 'منشار دائري كهربائي بمحرك 1600 واط وعمق قطع حتى 67 مم. مزود بحماية من الغبار وقاعدة من الألمنيوم للاستقرار.',
                 'description_en' => 'Electric circular saw with 1600W motor and cutting depth up to 67mm. Features dust protection and aluminum base for stability.',
                 'category_id' => 'power-tools',
-                'price' => 189.99,
-                'original_price' => 229.99,
-                'stock' => 35,
-                'sku' => 'DW-DWE575-002',
-                'rating' => 4.6,
-                'reviews_count' => 89,
-                'status' => 'active',
+                'price' => 189.99,'stock' => 35,
+                'sku' => 'DW-DWE575-002','status' => 'active',
                 'featured' => true,
                 'supplier_id' => 1,
                 'brand_id' => $brandDeWalt?->id,
@@ -215,13 +191,8 @@ class TranslatedDataSeeder extends Seeder
                 'description_ar' => 'خوذة أمان عالية الجودة مصنوعة من البولي إيثيلين المقاوم للصدمات مع واقي وجه شفاف قابل للطي. تلبي معايير السلامة الدولية.',
                 'description_en' => 'High-quality safety helmet made of impact-resistant polyethylene with foldable transparent face shield. Meets international safety standards.',
                 'category_id' => 'safety-equipment',
-                'price' => 45.50,
-                'original_price' => null,
-                'stock' => 120,
-                'sku' => 'SAF-HLM-003',
-                'rating' => 4.5,
-                'reviews_count' => 78,
-                'status' => 'active',
+                'price' => 45.50,'stock' => 120,
+                'sku' => 'SAF-HLM-003','status' => 'active',
                 'featured' => true,
                 'supplier_id' => 3,
                 'brand_id' => null,
@@ -233,13 +204,8 @@ class TranslatedDataSeeder extends Seeder
                 'description_ar' => 'مقياس مسافة بالليزر عالي الدقة مع مدى 50 متر ودقة ±1.5 مم. مزود بشاشة مضيئة وذاكرة للقراءات.',
                 'description_en' => 'High-precision laser distance meter with 50m range and ±1.5mm accuracy. Features illuminated display and memory for readings.',
                 'category_id' => 'measuring-tools',
-                'price' => 129.99,
-                'original_price' => 159.99,
-                'stock' => 40,
-                'sku' => 'BSH-GLM50-004',
-                'rating' => 4.9,
-                'reviews_count' => 92,
-                'status' => 'active',
+                'price' => 129.99,'stock' => 40,
+                'sku' => 'BSH-GLM50-004','status' => 'active',
                 'featured' => true,
                 'supplier_id' => 1,
                 'brand_id' => $brandBosch?->id,
@@ -251,13 +217,8 @@ class TranslatedDataSeeder extends Seeder
                 'description_ar' => 'أسمنت بورتلاند أبيض عالي الجودة مناسب لجميع أعمال البناء والخرسانة والديكور. معبأ في أكياس محكمة الإغلاق.',
                 'description_en' => 'High-quality white Portland cement suitable for all construction, concrete, and decorative work. Packed in sealed bags.',
                 'category_id' => 'raw-materials',
-                'price' => 35.00,
-                'original_price' => null,
-                'stock' => 300,
-                'sku' => 'CEM-WP50-005',
-                'rating' => 4.3,
-                'reviews_count' => 156,
-                'status' => 'active',
+                'price' => 35.00,'stock' => 300,
+                'sku' => 'CEM-WP50-005','status' => 'active',
                 'featured' => false,
                 'supplier_id' => 2,
                 'brand_id' => null,
@@ -422,9 +383,7 @@ class TranslatedDataSeeder extends Seeder
         
         foreach($users as $index => $user) {
             $addresses = [
-                [
-                    'user_id' => $user->id,
-                    'type' => 'home',
+                ['type' => 'home',
                     'name' => 'المنزل',
                     'phone' => $user->phone,
                     'street' => 'شارع ' . ($index + 1) . '، مبني رقم ' . (20 + $index),
@@ -434,9 +393,7 @@ class TranslatedDataSeeder extends Seeder
                     'country' => 'مصر',
                     'is_default' => true
                 ],
-                [
-                    'user_id' => $user->id,
-                    'type' => 'work',
+                ['type' => 'work',
                     'name' => 'العمل',
                     'phone' => $user->phone,
                     'street' => 'شارع العمل ' . ($index + 1) . '، مكتب رقم ' . (100 + $index),
@@ -465,9 +422,7 @@ class TranslatedDataSeeder extends Seeder
         
         foreach($users as $index => $user) {
             $order = Order::create([
-                'id' => 'ORD-2024-' . str_pad($index + 10, 3, '0', STR_PAD_LEFT),
-                'user_id' => $user->id,
-                'status' => ['pending', 'processing', 'delivered'][rand(0, 2)],
+                'id' => 'ORD-2024-' . str_pad($index + 10, 3, '0', STR_PAD_LEFT),'status' => ['pending', 'processing', 'delivered'][rand(0, 2)],
                 'subtotal' => 500.00,
                 'tax_amount' => 50.00,
                 'shipping_amount' => 25.00,
@@ -519,10 +474,7 @@ class TranslatedDataSeeder extends Seeder
         
         foreach($users as $user) {
             foreach($products->take(3) as $product) {
-                ProductReview::create([
-                    'user_id' => $user->id,
-                    'product_id' => $product->id,
-                    'rating' => rand(4, 5),
+                ProductReview::create(['product_id' => $product->id,
                     'review' => $reviews[array_rand($reviews)],
                     'status' => 'approved',
                     'verified_purchase' => true,
@@ -544,11 +496,7 @@ class TranslatedDataSeeder extends Seeder
                 'name' => 'سارة محمد',
                 'email' => 'sara@email.com',
                 'phone' => '+201234567893',
-                'company' => 'شركة التصميم الحديث',
-                'subject_ar' => 'استفسار عن الأدوات الكهربائية',
-                'subject_en' => 'Inquiry about power tools',
-                'message_ar' => 'أريد معرفة المزيد عن الأدوات الكهربائية المتوفرة لديكم وأسعارها',
-                'message_en' => 'I want to know more about the power tools you have available and their prices',
+                'company' => 'شركة التصميم الحديث','message' => 'I want to know more about the power tools you have available and their prices',
                 'project_type' => 'commercial',
                 'status' => 'new'
             ],
@@ -556,11 +504,7 @@ class TranslatedDataSeeder extends Seeder
                 'name' => 'خالد أحمد',
                 'email' => 'khaled@contractor.com',
                 'phone' => '+201234567894',
-                'company' => 'مقاولات خالد',
-                'subject_ar' => 'طلب عرض سعر لمشروع كبير',
-                'subject_en' => 'Request for quote for large project',
-                'message_ar' => 'لدي مشروع إنشائي كبير وأحتاج عرض سعر شامل للأدوات والمعدات',
-                'message_en' => 'I have a large construction project and need a comprehensive quote for tools and equipment',
+                'company' => 'مقاولات خالد','message' => 'I have a large construction project and need a comprehensive quote for tools and equipment',
                 'project_type' => 'industrial',
                 'status' => 'in_progress'
             ]
@@ -581,25 +525,13 @@ class TranslatedDataSeeder extends Seeder
         
         $notifications = [
             [
-                'type' => 'order_update',
-                'title_ar' => 'تحديث حالة الطلب',
-                'title_en' => 'Order Status Update',
-                'message_ar' => 'تم شحن طلبك وسيصل خلال 2-3 أيام عمل',
-                'message_en' => 'Your order has been shipped and will arrive in 2-3 business days'
+                'type' => 'order_update','message' => 'Your order has been shipped and will arrive in 2-3 business days'
             ],
             [
-                'type' => 'promotion',
-                'title_ar' => 'عرض خاص',
-                'title_en' => 'Special Offer',
-                'message_ar' => 'خصم 20% على جميع الأدوات الكهربائية لفترة محدودة',
-                'message_en' => '20% discount on all power tools for limited time'
+                'type' => 'promotion','message' => '20% discount on all power tools for limited time'
             ],
             [
-                'type' => 'welcome',
-                'title_ar' => 'مرحباً بك',
-                'title_en' => 'Welcome',
-                'message_ar' => 'مرحباً بك في متجرنا، نتمنى لك تجربة تسوق ممتعة',
-                'message_en' => 'Welcome to our store, we hope you have a great shopping experience'
+                'type' => 'welcome','message' => 'Welcome to our store, we hope you have a great shopping experience'
             ]
         ];
         

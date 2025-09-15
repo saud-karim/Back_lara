@@ -177,8 +177,8 @@ class EcommerceSeeder extends Seeder
                 'supplier_id' => $supplier->id,
                 'stock' => 1000,
                 'images' => json_encode([
-                    'https://example.com/images/portland-cement-50kg_1.jpg',
-                    'https://example.com/images/portland-cement-50kg_2.jpg'
+                    'cement-bag.jpg',
+                    'cement-stack.jpg'
                 ]),
             ],
             [
@@ -191,8 +191,8 @@ class EcommerceSeeder extends Seeder
                 'supplier_id' => $supplier->id,
                 'stock' => 500,
                 'images' => json_encode([
-                    'https://example.com/images/steel-rebar-12mm_1.jpg',
-                    'https://example.com/images/steel-rebar-12mm_2.jpg'
+                    'steel-rebar.jpg',
+                    'rebar-bundle.jpg'
                 ]),
             ],
         ];
@@ -258,11 +258,7 @@ class EcommerceSeeder extends Seeder
         $notifications = [
             [
                 'user_id' => $customerUser->id,
-                'type' => 'order',
-                'title_ar' => 'تأكيد الطلب',
-                'title_en' => 'Order Confirmation',
-                'message_ar' => 'تم وضع طلبك بنجاح وجاري المراجعة',
-                'message_en' => 'Your order has been placed successfully and is under review',
+                'type' => 'order','message' => 'Your order has been placed successfully and is under review',
                 'read_at' => null,
             ],
         ];
@@ -271,7 +267,7 @@ class EcommerceSeeder extends Seeder
             $existingNotification = DB::table('notifications')
                 ->where('user_id', $notificationData['user_id'])
                 ->where('type', $notificationData['type'])
-                ->where('message_en', $notificationData['message_en'])
+                ->where('message', $notificationData['message'])
                 ->first();
                 
             if (!$existingNotification) {
