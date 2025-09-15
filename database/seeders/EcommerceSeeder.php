@@ -49,253 +49,197 @@ class EcommerceSeeder extends Seeder
             ]
         );
 
+        // Create user for supplier first
         $supplierUser = User::firstOrCreate(
             ['email' => 'supplier@construction.com'],
             [
-                'name' => 'Supplier User',
+                'name' => 'مورد مواد البناء الأول',
                 'password' => Hash::make('password'),
-                'role' => 'supplier',
-                'address' => '789 Supplier Blvd, Village',
+                'role' => 'customer',
                 'phone' => '+1122334455',
+                'address' => 'مدينة الرياض، المملكة العربية السعودية',
                 'email_verified_at' => now(),
             ]
         );
 
-        // Assign roles if they don't have them
-        if (!$adminUser->hasRole('admin')) {
-            $adminUser->assignRole('admin');
-        }
-        if (!$customerUser->hasRole('customer')) {
-            $customerUser->assignRole('customer');
-        }
-        if (!$supplierUser->hasRole('supplier')) {
-            $supplierUser->assignRole('supplier');
-        }
-
-        // Create categories
-        $categories = [
-            [
-                'name_ar' => 'المواد الخام',
-                'name_en' => 'Raw Materials', 
-                'description_ar' => 'المواد الأساسية للبناء والتشييد',
-                'description_en' => 'Basic materials for construction and building',
-                'parent_id' => null,
-                'status' => 'active',
-                'sort_order' => 1
-            ],
-            [
-                'name_ar' => 'الأدوات الكهربائية',
-                'name_en' => 'Power Tools',
-                'description_ar' => 'أدوات كهربائية احترافية للبناء',
-                'description_en' => 'Professional power tools for construction',
-                'parent_id' => null,
-                'status' => 'active',
-                'sort_order' => 2
-            ],
-            [
-                'name_ar' => 'الأدوات اليدوية',
-                'name_en' => 'Hand Tools',
-                'description_ar' => 'أدوات يدوية تقليدية للاستخدام المهني',
-                'description_en' => 'Traditional hand tools for professional use',
-                'parent_id' => null,
-                'status' => 'active',
-                'sort_order' => 3
-            ]
-        ];
-
-        foreach ($categories as $categoryData) {
-            Category::firstOrCreate(['name_en' => $categoryData['name_en']], $categoryData);
-        }
-
-        // Create subcategories
-        $rawMaterialsCategory = Category::where('name_en', 'Raw Materials')->first();
-        $subcategories = [
-            [
-                'name_ar' => 'الأسمنت',
-                'name_en' => 'Cement',
-                'description_ar' => 'أسمنت عالي الجودة لأعمال البناء',
-                'description_en' => 'High-quality cement for construction work',
-                'parent_id' => $rawMaterialsCategory->id,
-                'status' => 'active',
-                'sort_order' => 1
-            ],
-            [
-                'name_ar' => 'الحديد',
-                'name_en' => 'Steel',
-                'description_ar' => 'حديد التسليح والإنشاءات',
-                'description_en' => 'Reinforcing steel for construction',
-                'parent_id' => $rawMaterialsCategory->id,
-                'status' => 'active',
-                'sort_order' => 2
-            ],
-            [
-                'name_ar' => 'الطوب',
-                'name_en' => 'Bricks',
-                'description_ar' => 'طوب البناء بأنواعه المختلفة',
-                'description_en' => 'Various types of building bricks',
-                'parent_id' => $rawMaterialsCategory->id,
-                'status' => 'active',
-                'sort_order' => 3
-            ]
-        ];
-
-        foreach ($subcategories as $subcategoryData) {
-            Category::firstOrCreate(['name_en' => $subcategoryData['name_en']], $subcategoryData);
-        }
-
-        // Create supplier
+        // Create suppliers only if they don't exist  
         $supplier = Supplier::firstOrCreate(
             ['user_id' => $supplierUser->id],
             [
-                'name_ar' => 'مورد مواد البناء الأول',
-                'name_en' => 'Construction Materials Supplier 1',
-                'description_ar' => 'مورد رائد في مواد البناء والإنشاءات',
-                'description_en' => 'Leading supplier of building and construction materials',
-                'email' => 'supplier@construction.com',
-                'phone' => '+1122334455',
                 'rating' => 4.5,
-                'certifications' => json_encode([
-                    'ISO 9001:2015',
-                    'OHSAS 18001:2007',
-                    'Environmental Management Certificate'
-                ]),
+                'certifications' => json_encode([]),
             ]
         );
 
-        // Create products
-        $cementCategory = Category::where('name_en', 'Cement')->first();
-        $steelCategory = Category::where('name_en', 'Steel')->first();
+        // Create categories only if they don't exist
+        $cementCategory = Category::firstOrCreate(
+            ['name_ar' => 'أسمنت ومواد ربط'],
+            [
+                'name_en' => 'Cement & Binding Materials',
+                'description_ar' => 'جميع أنواع الأسمنت ومواد الربط للبناء',
+                'description_en' => 'All types of cement and binding materials for construction',
+                'status' => 'active',
+                'parent_id' => null,
+                'sort_order' => 1,
+            ]
+        );
 
+        $steelCategory = Category::firstOrCreate(
+            ['name_ar' => 'حديد ومعادن'],
+            [
+                'name_en' => 'Steel & Metals',
+                'description_ar' => 'حديد التسليح والمعادن المختلفة',
+                'description_en' => 'Reinforcement steel and various metals',
+                'status' => 'active',
+                'parent_id' => null,
+                'sort_order' => 2,
+            ]
+        );
+
+        $bricksCategory = Category::firstOrCreate(
+            ['name_ar' => 'طوب ومواد البناء'],
+            [
+                'name_en' => 'Bricks & Building Materials',
+                'description_ar' => 'طوب أحمر وأبيض ومواد البناء الأساسية',
+                'description_en' => 'Red and white bricks and basic building materials',
+                'status' => 'active',
+                'parent_id' => null,
+                'sort_order' => 3,
+            ]
+        );
+
+        $toolsCategory = Category::firstOrCreate(
+            ['name_ar' => 'أدوات وعُدد'],
+            [
+                'name_en' => 'Tools & Equipment',
+                'description_ar' => 'أدوات يدوية وكهربائية للبناء',
+                'description_en' => 'Manual and electric tools for construction',
+                'status' => 'active',
+                'parent_id' => null,
+                'sort_order' => 4,
+            ]
+        );
+
+        $aggregatesCategory = Category::firstOrCreate(
+            ['name_ar' => 'ركام ورمل'],
+            [
+                'name_en' => 'Aggregates & Sand',
+                'description_ar' => 'رمل وحصى وركام للخرسانة',
+                'description_en' => 'Sand, gravel and aggregates for concrete',
+                'status' => 'active',
+                'parent_id' => null,
+                'sort_order' => 5,
+            ]
+        );
+
+        // Create products only if they don't exist
         $products = [
             [
                 'name_ar' => 'أسمنت بورتلاند 50 كيلو',
                 'name_en' => 'Portland Cement 50kg',
-                'description_ar' => 'أسمنت بورتلاند عالي الجودة للبناء والإنشاءات',
-                'description_en' => 'High-quality Portland cement for construction',
+                'description_ar' => 'أسمنت بورتلاند عالي الجودة للاستخدامات العامة في البناء',
+                'description_en' => 'High-quality Portland cement for general construction use',
+                'sku' => 'CEMENT-PORT-50',
                 'price' => 25.00,
                 'category_id' => $cementCategory->id,
                 'supplier_id' => $supplier->id,
                 'stock' => 1000,
-                'images' => json_encode([
-                    'cement-bag.jpg',
-                    'cement-stack.jpg'
-                ]),
             ],
             [
                 'name_ar' => 'حديد تسليح 12 مم',
                 'name_en' => 'Steel Rebar 12mm',
                 'description_ar' => 'حديد تسليح عالي الجودة للخرسانة المسلحة',
                 'description_en' => 'High-grade steel reinforcement bars for reinforced concrete',
+                'sku' => 'REBAR-12MM',
                 'price' => 45.50,
                 'category_id' => $steelCategory->id,
                 'supplier_id' => $supplier->id,
                 'stock' => 500,
-                'images' => json_encode([
-                    'steel-rebar.jpg',
-                    'rebar-bundle.jpg'
-                ]),
             ],
         ];
 
         foreach ($products as $productData) {
-            Product::firstOrCreate(['name_en' => $productData['name_en']], $productData);
+            Product::firstOrCreate(
+                ['sku' => $productData['sku']],
+                $productData
+            );
         }
 
-        // Create orders
-        $product1 = Product::where('name_en', 'Portland Cement 50kg')->first();
-        $product2 = Product::where('name_en', 'Steel Rebar 12mm')->first();
-
-        $order = Order::firstOrCreate(
-            ['user_id' => $customerUser->id],
-            [
-                'status' => 'pending',
-                'subtotal' => 0,
-                'total_amount' => 0, // Will be calculated
-                'shipping_address' => json_encode([
-                    'street' => '456 Customer Ave',
-                    'city' => 'Town',
-                    'country' => 'Egypt'
-                ]),
-                'payment_method' => 'cash_on_delivery',
-            ]
-        );
-
-        // Create order items if order was just created
-        if ($order->wasRecentlyCreated) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $product1->id,
-                'quantity' => 10,
-                'unit_price' => $product1->price,
-            ]);
-
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $product2->id,
-                'quantity' => 5,
-                'unit_price' => $product2->price,
-            ]);
-
-            // Calculate total amount
-            $totalAmount = ($product1->price * 10) + ($product2->price * 5);
-            $order->update([
-                'subtotal' => $totalAmount,
-                'total_amount' => $totalAmount
-            ]);
-        }
-
-        // Create shipment
-        if (!Shipment::where('order_id', $order->id)->exists()) {
-            Shipment::create([
-                'order_id' => $order->id,
-                'status' => 'pending',
-                'tracking_number' => 'TRACK' . str_pad($order->id, 8, '0', STR_PAD_LEFT),
-                'estimated_delivery' => now()->addDays(7),
-            ]);
-        }
-
-        // Create notifications
+        // Create sample notifications only if they don't exist
         $notifications = [
             [
-                'user_id' => $customerUser->id,
-                'type' => 'order','message' => 'Your order has been placed successfully and is under review',
+                'type' => 'order',
+                'user_id' => $adminUser->id,
+                'message' => 'تم وضع طلب جديد بقيمة 150 ج.م',
                 'read_at' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'type' => 'stock',
+                'user_id' => $adminUser->id,
+                'message' => 'مخزون المنتج حديد تسليح 12 مم أصبح أقل من 10 قطع',
+                'read_at' => null,
+                'created_at' => now()->subHours(2),
+                'updated_at' => now()->subHours(2),
+            ],
+            [
+                'type' => 'offer',
+                'user_id' => $customerUser->id,
+                'message' => 'عرض خاص: خصم 20% على جميع أدوات البناء',
+                'read_at' => now(),
+                'created_at' => now()->subDays(1),
+                'updated_at' => now()->subDays(1),
             ],
         ];
 
         foreach ($notifications as $notificationData) {
-            $existingNotification = DB::table('notifications')
+            // Check if notification doesn't exist before creating
+            $exists = DB::table('notifications')
                 ->where('user_id', $notificationData['user_id'])
                 ->where('type', $notificationData['type'])
-                ->where('message', $notificationData['message'])
-                ->first();
-                
-            if (!$existingNotification) {
+                ->where('created_at', $notificationData['created_at'])
+                ->exists();
+
+            if (!$exists) {
                 DB::table('notifications')->insert($notificationData);
             }
         }
 
-        // Create cost calculation
-        CostCalculation::firstOrCreate(
-            ['user_id' => $customerUser->id],
+        // Create sample cost calculations
+        $costCalculations = [
             [
+                'user_id' => $customerUser->id,
                 'area' => 100.00,
-                'materials' => [
-                    [
-                        'product_id' => $product1->id,
-                        'quantity' => 10,
-                        'unit_price' => $product1->price,
-                        'item_cost' => $product1->price * 10,
-                    ],
-                    [
-                        'product_id' => $product2->id,
-                        'quantity' => 5,
-                        'unit_price' => $product2->price,
-                        'item_cost' => $product2->price * 5,
-                    ],
-                ],
-                'total_cost' => ($product1->price * 10) + ($product2->price * 5),
-            ]
-        );
+                'materials' => json_encode([
+                    ['product_id' => 1, 'quantity' => 10],
+                    ['product_id' => 2, 'quantity' => 5]
+                ]),
+                'total_cost' => 350.00,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => $customerUser->id,
+                'area' => 50.00,
+                'materials' => json_encode([
+                    ['product_id' => 1, 'quantity' => 5]
+                ]),
+                'total_cost' => 125.00,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ];
+
+        foreach ($costCalculations as $costData) {
+            CostCalculation::firstOrCreate(
+                ['user_id' => $costData['user_id'], 'area' => $costData['area']],
+                $costData
+            );
+        }
+
+        echo "🎉 تم إنشاء البيانات الأساسية بنجاح\n";
+        echo "👑 Admin: admin@construction.com | password\n";
+        echo "👤 Customer: customer@construction.com | password\n";
     }
 } 

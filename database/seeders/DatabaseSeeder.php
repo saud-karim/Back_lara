@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
             BrandSeeder::class, 
             EcommerceSeeder::class,       // البيانات الأساسية
             CleanSeeder::class,           // بيانات إضافية آمنة
-            ExpandedDataSeeder::class,    // بيانات موسعة وغنية
         ]);
 
         $this->command->info("🎉 جميع السيدرز تمت بنجاح!");
