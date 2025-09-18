@@ -3,8 +3,14 @@
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Api\AdminContactController;
 use App\Http\Controllers\Api\AdminCustomerController;
 use App\Http\Controllers\Api\AdminReviewController;
+use App\Http\Controllers\Api\Admin\CompanyInfoController;
+use App\Http\Controllers\Api\Admin\CompanyStatsController;
+use App\Http\Controllers\Api\Admin\ContactInfoController;
+use App\Http\Controllers\Api\Admin\DepartmentController;
+use App\Http\Controllers\Api\Admin\SocialLinkController;
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BrandController;
@@ -100,6 +106,25 @@ Route::prefix('v1')->group(function () {
     Route::get('/newsletter/status', [NewsletterController::class, 'status'])->name('newsletter.status');
     Route::post('/newsletter/preferences', [NewsletterController::class, 'updatePreferences'])->name('newsletter.preferences');
     Route::get('/newsletter/preferences/available', [NewsletterController::class, 'availablePreferences'])->name('newsletter.preferences.available');
+
+    // ==========================================
+    // 🌐 PUBLIC CONTENT MANAGEMENT APIs
+    // ==========================================
+    // These APIs provide public access to company content for website display
+    Route::prefix('public')->group(function () {
+        Route::get('/company-info', [App\Http\Controllers\Api\Public\CompanyInfoController::class, 'index'])->name('public.company-info');
+        Route::get('/company-stats', [App\Http\Controllers\Api\Public\CompanyStatsController::class, 'index'])->name('public.company-stats');
+        Route::get('/contact-info', [App\Http\Controllers\Api\Public\ContactInfoController::class, 'index'])->name('public.contact-info');
+        Route::get('/social-links', [App\Http\Controllers\Api\Public\SocialLinksController::class, 'index'])->name('public.social-links');
+        Route::get('/page-content', [App\Http\Controllers\Api\Public\PageContentController::class, 'index'])->name('public.page-content');
+        Route::get('/company-values', [App\Http\Controllers\Api\Public\CompanyValueController::class, 'index'])->name('public.company-values');
+        Route::get('/company-milestones', [App\Http\Controllers\Api\Public\CompanyMilestoneController::class, 'index'])->name('public.company-milestones');
+        Route::get('/company-story', [App\Http\Controllers\Api\Public\CompanyStoryController::class, 'index'])->name('public.company-story');
+        Route::get('/team-members', [App\Http\Controllers\Api\Public\TeamMemberController::class, 'index'])->name('public.team-members');
+        Route::get('/departments', [App\Http\Controllers\Api\Public\DepartmentController::class, 'index'])->name('public.departments');
+        Route::get('/faqs', [App\Http\Controllers\Api\Public\FAQController::class, 'index'])->name('public.faqs');
+        Route::get('/certifications', [App\Http\Controllers\Api\Public\CertificationController::class, 'index'])->name('public.certifications');
+    });
 });
 
 // Protected routes
@@ -130,6 +155,9 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
         Route::put('/profile', [UserController::class, 'updateProfile'])->name('user.profile.update');
         Route::post('/documents', [UserController::class, 'uploadDocuments'])->name('user.documents');
+        
+        // User orders
+        Route::get('/orders', [OrderController::class, 'index'])->name('user.orders');
     });
 
     // Product routes (admin only)
@@ -287,5 +315,62 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::get('/{id}', [AdminReviewController::class, 'show'])->name('admin.reviews.show');
         Route::put('/{id}/status', [AdminReviewController::class, 'updateStatus'])->name('admin.reviews.updateStatus');
         Route::post('/bulk', [AdminReviewController::class, 'bulk'])->name('admin.reviews.bulk');
+    });
+
+    // Admin Contact Messages Management routes
+    Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin/contact-messages')->group(function () {
+        Route::get('/stats', [AdminContactController::class, 'stats'])->name('admin.contact.stats');
+        Route::get('/analytics', [AdminContactController::class, 'analytics'])->name('admin.contact.analytics');
+        Route::get('/', [AdminContactController::class, 'index'])->name('admin.contact.index');
+        Route::get('/{id}', [AdminContactController::class, 'show'])->name('admin.contact.show');
+        Route::put('/{id}', [AdminContactController::class, 'update'])->name('admin.contact.update');
+        Route::delete('/{id}', [AdminContactController::class, 'destroy'])->name('admin.contact.destroy');
+        Route::post('/bulk', [AdminContactController::class, 'bulkAction'])->name('admin.contact.bulk');
+    });
+
+    // Content Management System Routes
+    Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
+        // Company Info Management
+        Route::get('/company-info', [App\Http\Controllers\Api\Admin\CompanyInfoController::class, 'index'])->name('admin.company-info.index');
+        Route::put('/company-info', [App\Http\Controllers\Api\Admin\CompanyInfoController::class, 'update'])->name('admin.company-info.update');
+
+        // Company Stats Management
+        Route::get('/company-stats', [App\Http\Controllers\Api\Admin\CompanyStatsController::class, 'index'])->name('admin.company-stats.index');
+        Route::put('/company-stats', [App\Http\Controllers\Api\Admin\CompanyStatsController::class, 'update'])->name('admin.company-stats.update');
+
+        // Contact Info Management
+        Route::get('/contact-info', [App\Http\Controllers\Api\Admin\ContactInfoController::class, 'index'])->name('admin.contact-info.index');
+        Route::put('/contact-info', [App\Http\Controllers\Api\Admin\ContactInfoController::class, 'update'])->name('admin.contact-info.update');
+
+        // Departments Management
+        Route::apiResource('departments', App\Http\Controllers\Api\Admin\DepartmentController::class);
+        Route::put('/departments/order', [App\Http\Controllers\Api\Admin\DepartmentController::class, 'updateOrder'])->name('admin.departments.order');
+
+        // Social Links Management
+        Route::apiResource('social-links', App\Http\Controllers\Api\Admin\SocialLinkController::class);
+        Route::put('/social-links/order', [App\Http\Controllers\Api\Admin\SocialLinkController::class, 'updateOrder'])->name('admin.social-links.order');
+
+        // Team Members Management
+        Route::apiResource('team-members', App\Http\Controllers\Api\Admin\TeamMemberController::class);
+
+        // Company Values Management
+        Route::apiResource('company-values', App\Http\Controllers\Api\Admin\CompanyValueController::class);
+
+        // Company Milestones Management
+        Route::apiResource('company-milestones', App\Http\Controllers\Api\Admin\CompanyMilestoneController::class);
+
+        // Company Story Management
+        Route::get('/company-story', [App\Http\Controllers\Api\Admin\CompanyStoryController::class, 'index'])->name('admin.company-story.index');
+        Route::put('/company-story', [App\Http\Controllers\Api\Admin\CompanyStoryController::class, 'update'])->name('admin.company-story.update');
+
+        // Page Content Management
+        Route::get('/page-content', [App\Http\Controllers\Api\Admin\PageContentController::class, 'index'])->name('admin.page-content.index');
+        Route::put('/page-content', [App\Http\Controllers\Api\Admin\PageContentController::class, 'update'])->name('admin.page-content.update');
+
+        // FAQs Management
+        Route::apiResource('faqs', App\Http\Controllers\Api\Admin\FAQController::class);
+
+        // Certifications Management
+        Route::apiResource('certifications', App\Http\Controllers\Api\Admin\CertificationController::class);
     });
 });

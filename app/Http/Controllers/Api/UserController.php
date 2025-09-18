@@ -32,18 +32,21 @@ class UserController extends Controller
      */
     public function updateProfile(Request $request): JsonResponse
     {
+        $user = $request->user();
+        
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'address' => 'sometimes|string|max:1000',
-            'phone' => 'sometimes|string|max:20',
-            'password' => 'sometimes|string|min:8|confirmed',
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string',
+            'address' => 'nullable|string',
+            'company' => 'nullable|string',
         ]);
-
-        $user = $this->authService->updateProfile($request->user(), $validated);
-
+        
+        $user->update($validated);
+        
         return response()->json([
-            'message' => 'Profile updated successfully',
-            'user' => new UserResource($user->load('supplier')),
+            'success' => true,
+            'message' => 'تم تحديث الملف الشخصي بنجاح',
+            'data' => $user->fresh()
         ]);
     }
 
