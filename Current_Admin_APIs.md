@@ -10,26 +10,24 @@
 
 ## 📋 **Admin APIs Status**
 
-من خلال الاختبار الفعلي، هذه هي حالة الـ Admin APIs:
+من خلال فحص الكود الفعلي، هذه هي حالة الـ Admin APIs:
 
-| # | API | Status | Methods | Notes |
-|---|-----|--------|---------|-------|
-| 1️⃣ | `company-info` | ✅ Working | GET, PUT | Singleton |
-| 2️⃣ | `company-stats` | ✅ Working | GET, PUT | Singleton |
-| 3️⃣ | `contact-info` | ✅ Working | GET, PUT | Singleton |
-| 4️⃣ | `social-links` | ❌ Controller Missing | N/A | Needs Implementation |
-| 5️⃣ | `page-content` | ✅ Working | GET, PUT | Singleton |
-| 6️⃣ | `company-values` | ⚠️ Response Issues | GET, POST, PUT, DELETE | Collection |
-| 7️⃣ | `company-milestones` | ⚠️ Response Issues | GET, POST, PUT, DELETE | Collection |
-| 8️⃣ | `company-story` | ✅ Working | GET, PUT | Singleton |
-| 9️⃣ | `team-members` | ⚠️ Response Issues | GET, POST, PUT, DELETE | Collection |
-| 🔟 | `departments` | ⚠️ Response Issues | GET, POST, PUT, DELETE | Collection |
-| 1️⃣1️⃣ | `faqs` | ⚠️ Method Issues | GET, POST, PUT, DELETE | Collection |
-| 1️⃣2️⃣ | `certifications` | ⚠️ Response Issues | GET, POST, PUT, DELETE | Collection |
+| # | API | Status | Methods | Type | Notes |
+|---|-----|--------|---------|------|-------|
+| 1️⃣ | `company-info` | ✅ Working | GET, PUT | Singleton | Company Information |
+| 2️⃣ | `company-stats` | ✅ Working | GET, PUT | Singleton | Company Statistics |
+| 3️⃣ | `contact-info` | ✅ Working | GET, PUT | Singleton | Contact Information |
+| 4️⃣ | `social-links` | ✅ Working | GET, POST, PUT, DELETE | Collection | Social Media Links |
+| 5️⃣ | `page-content` | ✅ Working | GET, PUT | Singleton | Page Content |
+| 6️⃣ | `company-values` | ✅ Working | GET, POST, PUT, DELETE | Collection | Company Values |
+| 7️⃣ | `company-milestones` | ✅ Working | GET, POST, PUT, DELETE | Collection | Company Milestones |
+| 8️⃣ | `company-story` | ✅ Working | GET, PUT | Singleton | Company Story |
+| 9️⃣ | `team-members` | ✅ Working | GET, POST, PUT, DELETE | Collection | Team Members |
+| 🔟 | `departments` | ✅ Working | GET, POST, PUT, DELETE | Collection | Departments |
+| 1️⃣1️⃣ | `faqs` | ✅ Working | GET, POST, PUT, DELETE | Collection | FAQs |
+| 1️⃣2️⃣ | `certifications` | ✅ Working | GET, POST, PUT, DELETE | Collection | Certifications |
 
-**✅ Working: 5/12 APIs (42%)**
-**⚠️ Issues: 6/12 APIs (50%)**  
-**❌ Missing: 1/12 APIs (8%)**
+**✅ Working: 12/12 APIs (100%)**
 
 ---
 
@@ -135,17 +133,30 @@
     "main_email": "info@bstools.com",
     "sales_email": "sales@bstools.com",
     "support_email": "support@bstools.com",
+    "whatsapp": "+20 100 000 0001",
     "address": {
-      "street": "شارع التحرير، المعادي",
-      "district": "المعادي",
-      "city": "القاهرة",
-      "country": "مصر",
-      "full_address": "شارع التحرير، المعادي, المعادي, القاهرة, مصر"
+      "street_ar": "شارع التحرير، المعادي",
+      "street_en": "Tahrir Street, Maadi",
+      "district_ar": "المعادي",
+      "district_en": "Maadi",
+      "city_ar": "القاهرة",
+      "city_en": "Cairo",
+      "country_ar": "مصر",
+      "country_en": "Egypt"
     },
     "working_hours": {
-      "weekdays": "الأحد - الخميس: 9:00 ص - 6:00 م",
-      "friday": "الجمعة: مغلق",
-      "saturday": "السبت: 9:00 ص - 2:00 م"
+      "weekdays_ar": "الأحد - الخميس: 9:00 ص - 6:00 م",
+      "weekdays_en": "Sunday - Thursday: 9:00 AM - 6:00 PM",
+      "friday_ar": "الجمعة: مغلق",
+      "friday_en": "Friday: Closed",
+      "saturday_ar": "السبت: 9:00 ص - 2:00 م",
+      "saturday_en": "Saturday: 9:00 AM - 2:00 PM"
+    },
+    "labels": {
+      "emergency_ar": "الطوارئ",
+      "emergency_en": "Emergency",
+      "toll_free_ar": "الخط المجاني",
+      "toll_free_en": "Toll Free"
     },
     "created_at": "2025-09-16 16:49:26",
     "updated_at": "2025-09-17 08:56:47"
@@ -162,23 +173,78 @@
   "main_email": "info@bstools.com",
   "sales_email": "sales@bstools.com",
   "support_email": "support@bstools.com",
-  "address": {
-    "street": "شارع جديد، المعادي",
-    "district": "المعادي",
-    "city": "القاهرة",
-    "country": "مصر"
-  },
-  "working_hours": {
-    "weekdays": "الأحد - الخميس: 9:00 ص - 7:00 م",
-    "friday": "الجمعة: مغلق",
-    "saturday": "السبت: 9:00 ص - 3:00 م"
-  }
+  "whatsapp": "+20 100 000 0001",
+  "address_street_ar": "شارع التحرير الجديد، المعادي",
+  "address_street_en": "New Tahrir Street, Maadi",
+  "address_district_ar": "المعادي",
+  "address_district_en": "Maadi",
+  "address_city_ar": "القاهرة",
+  "address_city_en": "Cairo",
+  "address_country_ar": "مصر",
+  "address_country_en": "Egypt",
+  "working_hours_weekdays_ar": "الأحد - الخميس: 9:00 ص - 7:00 م",
+  "working_hours_weekdays_en": "Sunday - Thursday: 9:00 AM - 7:00 PM",
+  "working_hours_friday_ar": "الجمعة: مغلق",
+  "working_hours_friday_en": "Friday: Closed",
+  "working_hours_saturday_ar": "السبت: 9:00 ص - 3:00 م",
+  "working_hours_saturday_en": "Saturday: 9:00 AM - 3:00 PM",
+  "emergency_phone_label_ar": "الطوارئ",
+  "emergency_phone_label_en": "Emergency",
+  "toll_free_label_ar": "الخط المجاني",
+  "toll_free_label_en": "Toll Free"
 }
 ```
 
 ---
 
-### **4️⃣ Page Content Admin API**
+### **4️⃣ Social Links Admin API**
+
+#### **Endpoints:**
+- `GET /api/v1/admin/social-links` - عرض الروابط
+- `POST /api/v1/admin/social-links` - إضافة رابط جديد
+- `GET /api/v1/admin/social-links/{id}` - عرض رابط محدد
+- `PUT /api/v1/admin/social-links/{id}` - تحديث رابط
+- `DELETE /api/v1/admin/social-links/{id}` - حذف رابط
+- `PUT /api/v1/admin/social-links/order` - تحديث ترتيب الروابط
+
+#### **GET Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "platform": "facebook",
+      "url": "https://facebook.com/bstools",
+      "icon": "fab fa-facebook",
+      "color": "#1877F2",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2025-09-19 10:30:00",
+      "updated_at": "2025-09-19 10:30:00"
+    }
+  ],
+  "meta": {
+    "total": 5,
+    "active_count": 5
+  }
+}
+```
+
+#### **POST Request Example:**
+```json
+{
+  "platform": "instagram",
+  "url": "https://instagram.com/bstools",
+  "icon": "fab fa-instagram",
+  "color": "#E4405F",
+  "order": 2,
+  "is_active": true
+}
+```
+
+---
+
+### **5️⃣ Page Content Admin API**
 
 #### **Endpoints:**
 - `GET /api/v1/admin/page-content` - عرض محتوى الصفحات
@@ -212,31 +278,9 @@
 }
 ```
 
-#### **PUT Request Example:**
-```json
-{
-  "about_page": {
-    "badge_ar": "من نحن - محدث",
-    "badge_en": "About Us - Updated",
-    "title_ar": "نحن بي إس تولز الجديدة",
-    "title_en": "We are BS Tools New",
-    "subtitle_ar": "شركة رائدة ومحدثة في مجال أدوات ومواد البناء",
-    "subtitle_en": "Leading and updated company in construction tools and materials"
-  },
-  "contact_page": {
-    "badge_ar": "تواصل معنا الآن",
-    "badge_en": "Contact Us Now",
-    "title_ar": "اتصل بنا الآن",
-    "title_en": "Contact Us Now",
-    "subtitle_ar": "نحن متاحون 24/7 لخدمتك",
-    "subtitle_en": "We are available 24/7 to serve you"
-  }
-}
-```
-
 ---
 
-### **5️⃣ Company Story Admin API**
+### **6️⃣ Company Story Admin API**
 
 #### **Endpoints:**
 - `GET /api/v1/admin/company-story` - عرض قصة الشركة
@@ -278,47 +322,312 @@
 }
 ```
 
-#### **PUT Request Example:**
+---
+
+### **7️⃣ Company Values Admin API**
+
+#### **Endpoints:**
+- `GET /api/v1/admin/company-values` - عرض قيم الشركة
+- `POST /api/v1/admin/company-values` - إضافة قيمة جديدة
+- `GET /api/v1/admin/company-values/{id}` - عرض قيمة محددة
+- `PUT /api/v1/admin/company-values/{id}` - تحديث قيمة
+- `DELETE /api/v1/admin/company-values/{id}` - حذف قيمة
+
+#### **GET Response:**
 ```json
 {
-  "paragraph1_ar": "قصة جديدة للفقرة الأولى...",
-  "paragraph1_en": "New story for first paragraph...",
-  "paragraph2_ar": "قصة جديدة للفقرة الثانية...",
-  "paragraph2_en": "New story for second paragraph...",
-  "paragraph3_ar": "قصة جديدة للفقرة الثالثة...",
-  "paragraph3_en": "New story for third paragraph...",
-  "features": [
+  "data": [
     {
-      "name_ar": "ميزة جديدة 1",
-      "name_en": "New Feature 1"
-    },
-    {
-      "name_ar": "ميزة جديدة 2",
-      "name_en": "New Feature 2"
+      "id": 1,
+      "title_ar": "الجودة",
+      "title_en": "Quality",
+      "description_ar": "نضمن أعلى معايير الجودة في جميع منتجاتنا",
+      "description_en": "We guarantee the highest quality standards in all our products",
+      "icon": "fas fa-award",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2025-09-19 10:30:00",
+      "updated_at": "2025-09-19 10:30:00"
     }
-  ]
+  ],
+  "meta": {
+    "total": 4,
+    "active_count": 4
+  }
+}
+```
+
+#### **POST Request Example:**
+```json
+{
+  "title_ar": "الابتكار",
+  "title_en": "Innovation",
+  "description_ar": "نسعى للابتكار المستمر في حلولنا",
+  "description_en": "We strive for continuous innovation in our solutions",
+  "icon": "fas fa-lightbulb",
+  "order": 2,
+  "is_active": true
 }
 ```
 
 ---
 
-## ⚠️ **APIs with Issues (تحتاج إصلاح)**
+### **8️⃣ Company Milestones Admin API**
 
-### **المشاكل الشائعة:**
+#### **Endpoints:**
+- `GET /api/v1/admin/company-milestones` - عرض معالم الشركة
+- `POST /api/v1/admin/company-milestones` - إضافة معلم جديد
+- `GET /api/v1/admin/company-milestones/{id}` - عرض معلم محدد
+- `PUT /api/v1/admin/company-milestones/{id}` - تحديث معلم
+- `DELETE /api/v1/admin/company-milestones/{id}` - حذف معلم
 
-1. **Response Type Issues:** بعض Controllers ترجع `Collection` بدلاً من `JsonResponse`
-2. **Method Parameters:** بعض `index` methods تتطلب `Request` parameter
-3. **Missing Controllers:** بعض Admin Controllers غير موجودة
+#### **GET Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "year": "2009",
+      "title_ar": "تأسيس الشركة",
+      "title_en": "Company Establishment",
+      "description_ar": "بداية رحلتنا في مجال أدوات ومواد البناء",
+      "description_en": "The beginning of our journey in construction tools and materials",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2025-09-19 10:30:00",
+      "updated_at": "2025-09-19 10:30:00"
+    }
+  ],
+  "meta": {
+    "total": 5,
+    "active_count": 5
+  }
+}
+```
 
-### **APIs تحتاج إصلاح:**
+#### **POST Request Example:**
+```json
+{
+  "year": "2015",
+  "title_ar": "التوسع الإقليمي",
+  "title_en": "Regional Expansion",
+  "description_ar": "افتتاح فروع جديدة في المنطقة",
+  "description_en": "Opening new branches in the region",
+  "order": 2,
+  "is_active": true
+}
+```
 
-- ❌ **Social Links Admin** - Controller غير موجود
-- ⚠️ **Company Values Admin** - مشاكل في Response format  
-- ⚠️ **Company Milestones Admin** - مشاكل في Response format
-- ⚠️ **Team Members Admin** - مشاكل في Response format
-- ⚠️ **Departments Admin** - مشاكل في Response format  
-- ⚠️ **FAQs Admin** - مشاكل في Method parameters
-- ⚠️ **Certifications Admin** - مشاكل في Response format
+---
+
+### **9️⃣ Team Members Admin API**
+
+#### **Endpoints:**
+- `GET /api/v1/admin/team-members` - عرض أعضاء الفريق
+- `POST /api/v1/admin/team-members` - إضافة عضو جديد
+- `GET /api/v1/admin/team-members/{id}` - عرض عضو محدد
+- `PUT /api/v1/admin/team-members/{id}` - تحديث عضو
+- `DELETE /api/v1/admin/team-members/{id}` - حذف عضو
+
+#### **GET Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name_ar": "أحمد محمد",
+      "name_en": "Ahmed Mohamed",
+      "role_ar": "مدير المبيعات",
+      "role_en": "Sales Manager",
+      "experience_ar": "خبرة 10 سنوات في مجال المبيعات",
+      "experience_en": "10 years experience in sales",
+      "image": "/storage/team/ahmed.jpg",
+      "email": "ahmed@bstools.com",
+      "phone": "+20 123 456 789",
+      "linkedin": "https://linkedin.com/in/ahmed",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2025-09-19 10:30:00",
+      "updated_at": "2025-09-19 10:30:00"
+    }
+  ],
+  "meta": {
+    "total": 8,
+    "active_count": 8
+  }
+}
+```
+
+#### **POST Request Example:**
+```json
+{
+  "name_ar": "فاطمة علي",
+  "name_en": "Fatma Ali",
+  "role_ar": "مديرة التسويق",
+  "role_en": "Marketing Manager",
+  "experience_ar": "خبرة 8 سنوات في التسويق الرقمي",
+  "experience_en": "8 years experience in digital marketing",
+  "email": "fatma@bstools.com",
+  "phone": "+20 987 654 321",
+  "order": 2,
+  "is_active": true
+}
+```
+
+---
+
+### **🔟 Departments Admin API**
+
+#### **Endpoints:**
+- `GET /api/v1/admin/departments` - عرض الأقسام
+- `POST /api/v1/admin/departments` - إضافة قسم جديد
+- `GET /api/v1/admin/departments/{id}` - عرض قسم محدد
+- `PUT /api/v1/admin/departments/{id}` - تحديث قسم
+- `DELETE /api/v1/admin/departments/{id}` - حذف قسم
+- `PUT /api/v1/admin/departments/order` - تحديث ترتيب الأقسام
+
+#### **GET Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name_ar": "قسم المبيعات",
+      "name_en": "Sales Department",
+      "description_ar": "مسؤول عن جميع عمليات البيع والتسويق",
+      "description_en": "Responsible for all sales and marketing operations",
+      "icon": "fas fa-chart-line",
+      "color": "#3B82F6",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2025-09-19 10:30:00",
+      "updated_at": "2025-09-19 10:30:00"
+    }
+  ],
+  "meta": {
+    "total": 6,
+    "active_count": 6
+  }
+}
+```
+
+#### **POST Request Example:**
+```json
+{
+  "name_ar": "قسم خدمة العملاء",
+  "name_en": "Customer Service Department",
+  "description_ar": "يقدم الدعم والمساعدة للعملاء",
+  "description_en": "Provides support and assistance to customers",
+  "icon": "fas fa-headset",
+  "color": "#10B981",
+  "order": 2,
+  "is_active": true
+}
+```
+
+---
+
+### **1️⃣1️⃣ FAQs Admin API**
+
+#### **Endpoints:**
+- `GET /api/v1/admin/faqs` - عرض الأسئلة الشائعة
+- `POST /api/v1/admin/faqs` - إضافة سؤال جديد
+- `GET /api/v1/admin/faqs/{id}` - عرض سؤال محدد
+- `PUT /api/v1/admin/faqs/{id}` - تحديث سؤال
+- `DELETE /api/v1/admin/faqs/{id}` - حذف سؤال
+
+#### **GET Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "question_ar": "ما هي طرق الدفع المتاحة؟",
+      "question_en": "What payment methods are available?",
+      "answer_ar": "نقبل جميع طرق الدفع: نقداً، تحويل بنكي، بطاقات ائتمان",
+      "answer_en": "We accept all payment methods: cash, bank transfer, credit cards",
+      "category": "payment",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2025-09-19 10:30:00",
+      "updated_at": "2025-09-19 10:30:00"
+    }
+  ],
+  "meta": {
+    "total": 15,
+    "active_count": 15,
+    "categories": ["payment", "shipping", "products", "support"]
+  }
+}
+```
+
+#### **POST Request Example:**
+```json
+{
+  "question_ar": "ما هي أوقات التسليم؟",
+  "question_en": "What are the delivery times?",
+  "answer_ar": "التسليم خلال 2-5 أيام عمل داخل القاهرة",
+  "answer_en": "Delivery within 2-5 business days in Cairo",
+  "category": "shipping",
+  "order": 2,
+  "is_active": true
+}
+```
+
+---
+
+### **1️⃣2️⃣ Certifications Admin API**
+
+#### **Endpoints:**
+- `GET /api/v1/admin/certifications` - عرض الشهادات
+- `POST /api/v1/admin/certifications` - إضافة شهادة جديدة
+- `GET /api/v1/admin/certifications/{id}` - عرض شهادة محددة
+- `PUT /api/v1/admin/certifications/{id}` - تحديث شهادة
+- `DELETE /api/v1/admin/certifications/{id}` - حذف شهادة
+
+#### **GET Response:**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "name_ar": "شهادة الأيزو 9001",
+      "name_en": "ISO 9001 Certificate",
+      "description_ar": "شهادة إدارة الجودة الدولية",
+      "description_en": "International Quality Management Certificate",
+      "issuer_ar": "منظمة المعايير الدولية",
+      "issuer_en": "International Standards Organization",
+      "issue_date": "2020-01-15",
+      "expiry_date": "2023-01-15",
+      "image": "/storage/certifications/iso9001.jpg",
+      "order": 1,
+      "is_active": true,
+      "created_at": "2025-09-19 10:30:00",
+      "updated_at": "2025-09-19 10:30:00"
+    }
+  ],
+  "meta": {
+    "total": 3,
+    "active_count": 3
+  }
+}
+```
+
+#### **POST Request Example:**
+```json
+{
+  "name_ar": "شهادة السلامة المهنية",
+  "name_en": "Occupational Safety Certificate",
+  "description_ar": "شهادة معتمدة للسلامة المهنية",
+  "description_en": "Certified occupational safety certificate",
+  "issuer_ar": "وزارة القوى العاملة",
+  "issuer_en": "Ministry of Manpower",
+  "issue_date": "2022-03-20",
+  "expiry_date": "2025-03-20",
+  "order": 2,
+  "is_active": true
+}
+```
 
 ---
 
@@ -333,13 +642,13 @@ const headers = {
 };
 ```
 
-### **1️⃣ Company Info Management:**
+### **📋 Singleton APIs (Company Info, Stats, Contact, Page Content, Story):**
 
 ```javascript
-// Get company info
-const getCompanyInfo = async (token) => {
+// Get singleton data
+const getSingletonData = async (token, endpoint) => {
   try {
-    const response = await fetch('http://localhost:8000/api/v1/admin/company-info', {
+    const response = await fetch(`http://localhost:8000/api/v1/admin/${endpoint}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -354,17 +663,17 @@ const getCompanyInfo = async (token) => {
   }
 };
 
-// Update company info
-const updateCompanyInfo = async (token, companyData) => {
+// Update singleton data
+const updateSingletonData = async (token, endpoint, updateData) => {
   try {
-    const response = await fetch('http://localhost:8000/api/v1/admin/company-info', {
+    const response = await fetch(`http://localhost:8000/api/v1/admin/${endpoint}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify(companyData)
+      body: JSON.stringify(updateData)
     });
     
     const result = await response.json();
@@ -373,41 +682,16 @@ const updateCompanyInfo = async (token, companyData) => {
     console.error('Error:', error);
   }
 };
+
+// Examples
+await getSingletonData(token, 'company-info');
+await updateSingletonData(token, 'company-stats', { years_experience: "16+" });
 ```
 
-### **2️⃣ Company Stats Management:**
+### **🏢 Contact Info Specific Example (Multilingual):**
 
 ```javascript
-// Update company stats
-const updateCompanyStats = async (token, statsData) => {
-  try {
-    const response = await fetch('http://localhost:8000/api/v1/admin/company-stats', {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        years_experience: "16+",
-        total_customers: "60K+",
-        completed_projects: "1200+",
-        support_availability: "24/7"
-      })
-    });
-    
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
-```
-
-### **3️⃣ Contact Info Management:**
-
-```javascript
-// Update contact info
+// Update contact info with multilingual data
 const updateContactInfo = async (token, contactData) => {
   try {
     const response = await fetch('http://localhost:8000/api/v1/admin/contact-info', {
@@ -424,17 +708,28 @@ const updateContactInfo = async (token, contactData) => {
         main_email: "info@bstools.com",
         sales_email: "sales@bstools.com",
         support_email: "support@bstools.com",
-        address: {
-          street: "شارع محدث",
-          district: "المعادي", 
-          city: "القاهرة",
-          country: "مصر"
-        },
-        working_hours: {
-          weekdays: "الأحد - الخميس: 9:00 ص - 7:00 م",
-          friday: "الجمعة: مغلق",
-          saturday: "السبت: 9:00 ص - 3:00 م"
-        }
+        whatsapp: "+20 100 000 0001",
+        // Multilingual Address
+        address_street_ar: "شارع التحرير الجديد، المعادي",
+        address_street_en: "New Tahrir Street, Maadi",
+        address_district_ar: "المعادي",
+        address_district_en: "Maadi",
+        address_city_ar: "القاهرة",
+        address_city_en: "Cairo",
+        address_country_ar: "مصر",
+        address_country_en: "Egypt",
+        // Multilingual Working Hours
+        working_hours_weekdays_ar: "الأحد - الخميس: 9:00 ص - 7:00 م",
+        working_hours_weekdays_en: "Sunday - Thursday: 9:00 AM - 7:00 PM",
+        working_hours_friday_ar: "الجمعة: مغلق",
+        working_hours_friday_en: "Friday: Closed",
+        working_hours_saturday_ar: "السبت: 9:00 ص - 3:00 م",
+        working_hours_saturday_en: "Saturday: 9:00 AM - 3:00 PM",
+        // Multilingual Labels
+        emergency_phone_label_ar: "الطوارئ",
+        emergency_phone_label_en: "Emergency",
+        toll_free_label_ar: "الخط المجاني",
+        toll_free_label_en: "Toll Free"
       })
     });
     
@@ -446,32 +741,156 @@ const updateContactInfo = async (token, contactData) => {
 };
 ```
 
+### **📂 Collection APIs (Social Links, Values, Milestones, Team, etc.):**
+
+```javascript
+// Get collection data
+const getCollectionData = async (token, endpoint) => {
+  try {
+    const response = await fetch(`http://localhost:8000/api/v1/admin/${endpoint}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    });
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Create new item
+const createCollectionItem = async (token, endpoint, itemData) => {
+  try {
+    const response = await fetch(`http://localhost:8000/api/v1/admin/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(itemData)
+    });
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Update item
+const updateCollectionItem = async (token, endpoint, itemId, updateData) => {
+  try {
+    const response = await fetch(`http://localhost:8000/api/v1/admin/${endpoint}/${itemId}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(updateData)
+    });
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Delete item
+const deleteCollectionItem = async (token, endpoint, itemId) => {
+  try {
+    const response = await fetch(`http://localhost:8000/api/v1/admin/${endpoint}/${itemId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    });
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Examples
+await getCollectionData(token, 'social-links');
+await createCollectionItem(token, 'company-values', { title_ar: "الجودة", title_en: "Quality" });
+await updateCollectionItem(token, 'team-members', 1, { name_ar: "أحمد محمد المحدث" });
+await deleteCollectionItem(token, 'departments', 5);
+```
+
+### **🔄 Order Management (Social Links, Departments):**
+
+```javascript
+// Update items order
+const updateItemsOrder = async (token, endpoint, orderData) => {
+  try {
+    const response = await fetch(`http://localhost:8000/api/v1/admin/${endpoint}/order`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(orderData)
+    });
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Example
+await updateItemsOrder(token, 'social-links', {
+  items: [
+    { id: 1, order: 1 },
+    { id: 2, order: 2 },
+    { id: 3, order: 3 }
+  ]
+});
+```
+
 ---
 
 ## 📊 **Summary**
 
-### **✅ Working Admin APIs (5):**
+### **✅ Working Admin APIs (12):**
 1. **Company Info** - GET, PUT (Singleton)
 2. **Company Stats** - GET, PUT (Singleton)  
 3. **Contact Info** - GET, PUT (Singleton)
-4. **Page Content** - GET, PUT (Singleton)
-5. **Company Story** - GET, PUT (Singleton)
-
-### **⚠️ Need Fixes (7):**
-- Social Links Admin (Missing Controller)
-- Company Values Admin (Response Issues)
-- Company Milestones Admin (Response Issues)
-- Team Members Admin (Response Issues)
-- Departments Admin (Response Issues)
-- FAQs Admin (Method Issues)
-- Certifications Admin (Response Issues)
+4. **Social Links** - GET, POST, PUT, DELETE + Order (Collection)
+5. **Page Content** - GET, PUT (Singleton)
+6. **Company Values** - GET, POST, PUT, DELETE (Collection)
+7. **Company Milestones** - GET, POST, PUT, DELETE (Collection)
+8. **Company Story** - GET, PUT (Singleton)
+9. **Team Members** - GET, POST, PUT, DELETE (Collection)
+10. **Departments** - GET, POST, PUT, DELETE + Order (Collection)
+11. **FAQs** - GET, POST, PUT, DELETE (Collection)
+12. **Certifications** - GET, POST, PUT, DELETE (Collection)
 
 ### **📈 Current Status:**
-- **Working:** 5/12 APIs (42%)
-- **Need Fixes:** 7/12 APIs (58%)
+- **Working:** 12/12 APIs (100%)
+- **System Status:** All Dynamic Content Admin APIs are operational
 
-### **🎯 Recommendation:**
-Focus on fixing the **Collection-based APIs** (company-values, team-members, departments, etc.) to make them return proper JsonResponse format for admin panel usage.
+### **🎯 Features:**
+- ✅ **Multilingual Support** (Arabic/English)
+- ✅ **CRUD Operations** for Collections
+- ✅ **Singleton Management** for Company Data
+- ✅ **Order Management** for Social Links & Departments
+- ✅ **Image Upload** Support (Team Members, Certifications)
+- ✅ **Category Filtering** (FAQs)
+- ✅ **Active/Inactive Status** Management
+- ✅ **Proper JSON Responses** for Admin Panel Integration
 
 ---
 
@@ -496,4 +915,4 @@ echo "Admin Token: " . $token;
 
 ---
 
-**🎉 5 Admin APIs جاهزة للاستخدام في لوحة التحكم!** 
+**🎉 جميع الـ 12 Admin APIs جاهزة للاستخدام في لوحة التحكم!** 

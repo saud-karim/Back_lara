@@ -39,12 +39,40 @@ class ContactInfoController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                // Phone and Email fields (no multilingual needed)
                 'main_phone' => 'nullable|string|max:20',
                 'secondary_phone' => 'nullable|string|max:20',
                 'toll_free' => 'nullable|string|max:100',
                 'main_email' => 'nullable|email|max:100',
                 'sales_email' => 'nullable|email|max:100',
                 'support_email' => 'nullable|email|max:100',
+                'whatsapp' => 'nullable|string|max:20',
+                
+                // Multilingual Address fields
+                'address_street_ar' => 'nullable|string|max:255',
+                'address_street_en' => 'nullable|string|max:255',
+                'address_district_ar' => 'nullable|string|max:100',
+                'address_district_en' => 'nullable|string|max:100',
+                'address_city_ar' => 'nullable|string|max:100',
+                'address_city_en' => 'nullable|string|max:100',
+                'address_country_ar' => 'nullable|string|max:100',
+                'address_country_en' => 'nullable|string|max:100',
+                
+                // Multilingual Working Hours fields
+                'working_hours_weekdays_ar' => 'nullable|string|max:255',
+                'working_hours_weekdays_en' => 'nullable|string|max:255',
+                'working_hours_friday_ar' => 'nullable|string|max:255',
+                'working_hours_friday_en' => 'nullable|string|max:255',
+                'working_hours_saturday_ar' => 'nullable|string|max:255',
+                'working_hours_saturday_en' => 'nullable|string|max:255',
+                
+                // Multilingual Labels
+                'emergency_phone_label_ar' => 'nullable|string|max:100',
+                'emergency_phone_label_en' => 'nullable|string|max:100',
+                'toll_free_label_ar' => 'nullable|string|max:100',
+                'toll_free_label_en' => 'nullable|string|max:100',
+                
+                // Legacy fields for backward compatibility (deprecated)
                 'address_street' => 'nullable|string|max:255',
                 'address_district' => 'nullable|string|max:100',
                 'address_city' => 'nullable|string|max:100',
