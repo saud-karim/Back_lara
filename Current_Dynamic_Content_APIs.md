@@ -14,6 +14,7 @@
 - 🌐 **تحديث للدعم متعدد اللغات:** العنوان وأوقات العمل بالعربي والإنجليزي
 - 📱 **إضافة رقم واتساب:** `whatsapp` مخصص
 - 🏷️ **تسميات مخصصة:** `labels` للطوارئ والخط المجاني باللغتين
+- 🗺️ **إضافة رابط الخريطة:** `google_maps_url` للموقع الجغرافي
 
 ---
 
@@ -127,6 +128,7 @@
       "toll_free_ar": "الخط المجاني",
       "toll_free_en": "Toll Free"
     },
+    "google_maps_url": "https://maps.google.com/maps?q=30.0444196,31.2357116&z=15&output=embed",
     "created_at": "2025-09-16 16:49:26",
     "updated_at": "2025-09-17 08:56:47"
   }
@@ -140,6 +142,7 @@
 - ✅ **عنوان متعدد اللغات** (عربي/إنجليزي)
 - ✅ **أوقات عمل متعددة اللغات** (عربي/إنجليزي)
 - ✅ **تسميات مخصصة** للطوارئ والخط المجاني باللغتين
+- ✅ **رابط الخريطة** Google Maps للموقع الجغرافي
 
 ---
 
@@ -809,6 +812,7 @@ const fetchPublicData = async (endpoint) => {
 
 // Examples
 const companyInfo = await fetchPublicData('company-info');
+const contactInfo = await fetchPublicData('contact-info'); // Includes google_maps_url
 const certifications = await fetchPublicData('certifications');
 const socialLinks = await fetchPublicData('social-links');
 ```
@@ -841,6 +845,34 @@ const fetchCertifications = async () => {
     return result;
   } catch (error) {
     console.error('Error fetching certifications:', error);
+  }
+};
+```
+
+### **🗺️ Contact Info with Google Maps:**
+```javascript
+// Fetch contact info and use Google Maps URL
+const fetchContactWithMap = async () => {
+  try {
+    const contactInfo = await fetchPublicData('contact-info');
+    
+    if (contactInfo.success && contactInfo.data.google_maps_url) {
+      // Use the Google Maps URL for iframe embed
+      const mapFrame = document.createElement('iframe');
+      mapFrame.src = contactInfo.data.google_maps_url;
+      mapFrame.width = '100%';
+      mapFrame.height = '300';
+      mapFrame.frameBorder = '0';
+      
+      // Add to page
+      document.getElementById('map-container').appendChild(mapFrame);
+      
+      console.log('Map loaded:', contactInfo.data.google_maps_url);
+    }
+    
+    return contactInfo;
+  } catch (error) {
+    console.error('Error loading contact info:', error);
   }
 };
 ```

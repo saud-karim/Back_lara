@@ -170,6 +170,7 @@
       "toll_free_ar": "الخط المجاني",
       "toll_free_en": "Toll Free"
     },
+    "google_maps_url": "https://maps.google.com/maps?q=30.0444196,31.2357116&z=15&output=embed",
     "created_at": "2025-09-16 16:49:26",
     "updated_at": "2025-09-17 08:56:47"
   }
@@ -203,7 +204,8 @@
   "emergency_phone_label_ar": "الطوارئ",
   "emergency_phone_label_en": "Emergency",
   "toll_free_label_ar": "الخط المجاني",
-  "toll_free_label_en": "Toll Free"
+  "toll_free_label_en": "Toll Free",
+  "google_maps_url": "https://maps.google.com/maps?q=30.0444196,31.2357116&z=15&output=embed"
 }
 ```
 
@@ -771,7 +773,9 @@ const updateContactInfo = async (token, contactData) => {
         emergency_phone_label_ar: "الطوارئ",
         emergency_phone_label_en: "Emergency",
         toll_free_label_ar: "الخط المجاني",
-        toll_free_label_en: "Toll Free"
+        toll_free_label_en: "Toll Free",
+        // Google Maps URL
+        google_maps_url: "https://maps.google.com/maps?q=30.0444196,31.2357116&z=15&output=embed"
       })
     });
     

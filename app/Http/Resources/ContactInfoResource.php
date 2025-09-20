@@ -53,6 +53,7 @@ class ContactInfoResource extends JsonResource
                 'toll_free_ar' => $this->toll_free_label_ar,
                 'toll_free_en' => $this->toll_free_label_en
             ],
+            'google_maps_url' => $this->google_maps_url,
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at?->format('Y-m-d H:i:s')
         ];

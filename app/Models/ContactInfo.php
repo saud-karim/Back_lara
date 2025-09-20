@@ -44,7 +44,8 @@ class ContactInfo extends Model
         'emergency_phone_label_en',
         'toll_free_label_ar',
         'toll_free_label_en',
-        'whatsapp'
+        'whatsapp',
+        'google_maps_url'
     ];
 
     protected $casts = [
@@ -92,7 +93,8 @@ class ContactInfo extends Model
             'emergency_phone_label_en' => 'Emergency',
             'toll_free_label_ar' => 'الخط المجاني',
             'toll_free_label_en' => 'Toll Free',
-            'whatsapp' => '+20 100 000 0001'
+            'whatsapp' => '+20 100 000 0001',
+            'google_maps_url' => 'https://maps.google.com/maps?q=30.0444196,31.2357116&z=15&output=embed'
         ]);
     }
 
