@@ -14,7 +14,6 @@ use App\Models\CompanyMilestone;
 use App\Models\CompanyStory;
 use App\Models\PageContent;
 use App\Models\FAQ;
-use App\Models\Certification;
 
 class DynamicContentSeederFixed extends Seeder
 {
@@ -207,16 +206,8 @@ class DynamicContentSeederFixed extends Seeder
         ];
         foreach ($faqs as $faq) { FAQ::create($faq); }
 
-        // 12. Certifications (Replace existing with real data)
-        $this->command->info('1️⃣2️⃣ Seeding Certifications...');
-        Certification::truncate();
-        $certifications = [
-            ['name_ar' => 'شهادة ISO 9001', 'name_en' => 'ISO 9001 Certificate', 'description_ar' => 'معتمدون في إدارة الجودة الشاملة', 'description_en' => 'Certified in total quality management', 'icon' => '🏅', 'order' => 1, 'is_active' => true],
-            ['name_ar' => 'معايير OSHA', 'name_en' => 'OSHA Standards', 'description_ar' => 'ملتزمون بأعلى معايير الأمان والسلامة', 'description_en' => 'Committed to the highest safety and security standards', 'icon' => '🛡️', 'order' => 2, 'is_active' => true],
-            ['name_ar' => 'شريك معتمد', 'name_en' => 'Authorized Partner', 'description_ar' => 'شريك رسمي للعلامات التجارية العالمية', 'description_en' => 'Official partner for global brands', 'icon' => '🤝', 'order' => 3, 'is_active' => true],
-            ['name_ar' => 'رائد السوق', 'name_en' => 'Market Leader', 'description_ar' => 'الشركة الرائدة في المنطقة لثلاث سنوات متتالية', 'description_en' => 'Leading company in the region for three consecutive years', 'icon' => '👑', 'order' => 4, 'is_active' => true]
-        ];
-        foreach ($certifications as $certification) { Certification::create($certification); }
+        // 12. Certifications - Handled by separate CertificationSeeder
+        $this->command->info('1️⃣2️⃣ Skipping Certifications (handled by CertificationSeeder)...');
 
         $this->command->info('✅ Dynamic Content Management data seeded successfully!');
         $this->command->info('📊 Summary:');
@@ -231,7 +222,7 @@ class DynamicContentSeederFixed extends Seeder
         $this->command->info('   - Company Story: 1 record (Complete 3-paragraph story)');
         $this->command->info('   - Page Content: 1 record (About & Contact page content)');
         $this->command->info('   - FAQs: 6 records (General, Sales, Shipping, Support, Products, Payment)');
-        $this->command->info('   - Certifications: 4 records (ISO 9001, OSHA, Partner, Market Leader)');
+        $this->command->info('   - Certifications: Handled by separate CertificationSeeder');
         $this->command->info('🎉 All Dynamic Content is ready for the APIs!');
     }
 } 

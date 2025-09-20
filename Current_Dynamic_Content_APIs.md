@@ -1,5 +1,22 @@
 # 📋 **الـ Dynamic Content APIs الموجودة حالياً**
 
+## 🆕 **آخر التحديثات (2025-09-20)**
+
+### **✅ تم تحديث Public APIs:**
+
+#### **🏆 Certifications API:**
+- 🔧 **إضافة حقول جديدة:** `issuer_ar/en` (الجهة المصدرة)
+- 📅 **دعم التواريخ:** `issue_date` (تاريخ الإصدار) و `expiry_date` (تاريخ الانتهاء)
+- 🖼️ **دعم الصور:** `image` (مسار الصورة لكل شهادة)
+- 📊 **تحديث البيانات:** 3 شهادات حقيقية مع بيانات واقعية
+
+#### **📞 Contact Info API:**
+- 🌐 **تحديث للدعم متعدد اللغات:** العنوان وأوقات العمل بالعربي والإنجليزي
+- 📱 **إضافة رقم واتساب:** `whatsapp` مخصص
+- 🏷️ **تسميات مخصصة:** `labels` للطوارئ والخط المجاني باللغتين
+
+---
+
 ## 🎯 **حالة النظام**
 
 **✅ جميع الـ 12 APIs تعمل بنسبة 100%**
@@ -73,7 +90,7 @@
 
 ### **Endpoint:** `GET /api/v1/public/contact-info`
 
-### **الاستجابة الحقيقية:**
+### **الاستجابة الحقيقية (محدثة):**
 ```json
 {
   "success": true,
@@ -85,17 +102,30 @@
     "main_email": "info@bstools.com",
     "sales_email": "sales@bstools.com",
     "support_email": "support@bstools.com",
+    "whatsapp": "+20 100 000 0001",
     "address": {
-      "street": "شارع التحرير، المعادي",
-      "district": "المعادي",
-      "city": "القاهرة",
-      "country": "مصر",
-      "full_address": "شارع التحرير، المعادي, المعادي, القاهرة, مصر"
+      "street_ar": "شارع التحرير، المعادي",
+      "street_en": "Tahrir Street, Maadi",
+      "district_ar": "المعادي",
+      "district_en": "Maadi",
+      "city_ar": "القاهرة",
+      "city_en": "Cairo",
+      "country_ar": "مصر",
+      "country_en": "Egypt"
     },
     "working_hours": {
-      "weekdays": "الأحد - الخميس: 9:00 ص - 6:00 م",
-      "friday": "الجمعة: مغلق",
-      "saturday": "السبت: 9:00 ص - 2:00 م"
+      "weekdays_ar": "الأحد - الخميس: 9:00 ص - 6:00 م",
+      "weekdays_en": "Sunday - Thursday: 9:00 AM - 6:00 PM",
+      "friday_ar": "الجمعة: مغلق",
+      "friday_en": "Friday: Closed",
+      "saturday_ar": "السبت: 9:00 ص - 2:00 م",
+      "saturday_en": "Saturday: 9:00 AM - 2:00 PM"
+    },
+    "labels": {
+      "emergency_ar": "الطوارئ",
+      "emergency_en": "Emergency",
+      "toll_free_ar": "الخط المجاني",
+      "toll_free_en": "Toll Free"
     },
     "created_at": "2025-09-16 16:49:26",
     "updated_at": "2025-09-17 08:56:47"
@@ -103,11 +133,13 @@
 }
 ```
 
-### **✅ ملاحظات:**
+### **✅ ملاحظات (محدثة):**
 - ✅ **3 أرقام هواتف** (رئيسي، ثانوي، مجاني)
 - ✅ **3 إيميلات** (عام، مبيعات، دعم فني)
-- ✅ **عنوان مفصل** (JSON object)
-- ✅ **أوقات العمل مفصلة** (JSON object)
+- ✅ **رقم واتساب** مخصص
+- ✅ **عنوان متعدد اللغات** (عربي/إنجليزي)
+- ✅ **أوقات عمل متعددة اللغات** (عربي/إنجليزي)
+- ✅ **تسميات مخصصة** للطوارئ والخط المجاني باللغتين
 
 ---
 
@@ -650,59 +682,69 @@
 
 ### **Endpoint:** `GET /api/v1/public/certifications`
 
-### **الاستجابة الحقيقية:**
+### **الاستجابة الحقيقية (محدثة):**
 ```json
 {
   "success": true,
   "data": [
     {
       "id": 1,
-      "name_ar": "شهادة ISO 9001",
+      "name_ar": "شهادة الأيزو 9001",
       "name_en": "ISO 9001 Certificate",
-      "description_ar": "معتمدون في إدارة الجودة الشاملة",
-      "description_en": "Certified in total quality management",
-      "icon": "🏅",
+      "description_ar": "شهادة إدارة الجودة الدولية",
+      "description_en": "International Quality Management Certificate",
+      "issuer_ar": "منظمة المعايير الدولية",
+      "issuer_en": "International Standards Organization",
+      "issue_date": "2020-01-15",
+      "expiry_date": "2023-01-15",
+      "image": "/storage/certifications/iso9001.jpg",
       "order": 1,
-      "is_active": true
+      "is_active": true,
+      "created_at": "2025-09-20 16:36:08",
+      "updated_at": "2025-09-20 16:36:08"
     },
     {
       "id": 2,
-      "name_ar": "معايير OSHA",
-      "name_en": "OSHA Standards",
-      "description_ar": "ملتزمون بأعلى معايير الأمان والسلامة",
-      "description_en": "Committed to the highest safety and security standards",
-      "icon": "🛡️",
+      "name_ar": "شهادة السلامة المهنية",
+      "name_en": "Occupational Safety Certificate",
+      "description_ar": "شهادة معتمدة للسلامة المهنية",
+      "description_en": "Certified occupational safety certificate",
+      "issuer_ar": "وزارة القوى العاملة",
+      "issuer_en": "Ministry of Manpower",
+      "issue_date": "2022-03-20",
+      "expiry_date": "2025-03-20",
+      "image": "/storage/certifications/safety.jpg",
       "order": 2,
-      "is_active": true
+      "is_active": true,
+      "created_at": "2025-09-20 16:36:08",
+      "updated_at": "2025-09-20 16:36:08"
     },
     {
       "id": 3,
-      "name_ar": "شريك معتمد",
-      "name_en": "Authorized Partner",
-      "description_ar": "شريك رسمي للعلامات التجارية العالمية",
-      "description_en": "Official partner for global brands",
-      "icon": "🤝",
+      "name_ar": "شهادة الجودة البيئية",
+      "name_en": "Environmental Quality Certificate",
+      "description_ar": "شهادة معتمدة للجودة البيئية والاستدامة",
+      "description_en": "Certified environmental quality and sustainability certificate",
+      "issuer_ar": "وزارة البيئة",
+      "issuer_en": "Ministry of Environment",
+      "issue_date": "2021-06-10",
+      "expiry_date": "2024-06-10",
+      "image": "/storage/certifications/environmental.jpg",
       "order": 3,
-      "is_active": true
-    },
-    {
-      "id": 4,
-      "name_ar": "رائد السوق",
-      "name_en": "Market Leader",
-      "description_ar": "الشركة الرائدة في المنطقة لثلاث سنوات متتالية",
-      "description_en": "Leading company in the region for three consecutive years",
-      "icon": "👑",
-      "order": 4,
-      "is_active": true
+      "is_active": true,
+      "created_at": "2025-09-20 16:36:08",
+      "updated_at": "2025-09-20 16:36:08"
     }
   ]
 }
 ```
 
-### **✅ ملاحظات:**
-- ✅ **4 شهادات مهمة** (ISO 9001, OSHA, شريك معتمد, رائد السوق)
-- ✅ **أيقونات معبرة** لكل شهادة
-- ✅ **أوصاف واقعية** للشهادات
+### **✅ ملاحظات (محدثة):**
+- ✅ **3 شهادات حقيقية** (ISO 9001, السلامة المهنية, الجودة البيئية)
+- ✅ **حقول جديدة:** الجهة المصدرة (`issuer_ar/en`)، تاريخ الإصدار (`issue_date`)، تاريخ الانتهاء (`expiry_date`)
+- ✅ **دعم الصور:** مسار الصورة (`image`) لكل شهادة
+- ✅ **بيانات واقعية:** شهادات فعلية بتواريخ حقيقية وجهات مصدرة معروفة
+- ✅ **أوقات التحديث:** `created_at` و `updated_at` محدثة
 
 ---
 
@@ -728,7 +770,7 @@
 | Team Members | 4 سجلات | Collection |
 | Departments | 4 سجلات | Collection |
 | FAQs | 6 سجلات | Collection |
-| Certifications | 4 سجلات | Collection |
+| Certifications | 3 سجلات | Collection |
 
 ### **🎯 مميزات البيانات:**
 - ✅ **محتوى عربي وإنجليزي** كامل
@@ -737,7 +779,98 @@
 - ✅ **ترتيب قابل للتخصيص** (order field)
 - ✅ **إمكانية التفعيل/الإلغاء** (is_active field)
 - ✅ **timestamps** لتتبع التحديثات
+- ✅ **دعم الصور** في Team Members و Certifications
+- ✅ **تواريخ الإصدار والانتهاء** للشهادات
+- ✅ **معلومات الجهات المصدرة** للشهادات باللغتين
 
 ### **🔥 جاهز للاستخدام فوراً!**
+
+---
+
+## 💻 **JavaScript Usage Examples**
+
+### **📋 Basic API Call:**
+```javascript
+const fetchPublicData = async (endpoint) => {
+  try {
+    const response = await fetch(`http://localhost:8000/api/v1/public/${endpoint}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Examples
+const companyInfo = await fetchPublicData('company-info');
+const certifications = await fetchPublicData('certifications');
+const socialLinks = await fetchPublicData('social-links');
+```
+
+### **🏆 Certifications API Example (Updated):**
+```javascript
+// Fetch all certifications with new fields
+const fetchCertifications = async () => {
+  try {
+    const response = await fetch('http://localhost:8000/api/v1/public/certifications', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      result.data.forEach(cert => {
+        console.log(`Certificate: ${cert.name_ar} (${cert.name_en})`);
+        console.log(`Issuer: ${cert.issuer_ar} (${cert.issuer_en})`);
+        console.log(`Issue Date: ${cert.issue_date}`);
+        console.log(`Expiry Date: ${cert.expiry_date || 'No expiry'}`);
+        console.log(`Image: ${cert.image || 'No image'}`);
+        console.log('---');
+      });
+    }
+    
+    return result;
+  } catch (error) {
+    console.error('Error fetching certifications:', error);
+  }
+};
+```
+
+### **🌐 Multi-language Support:**
+```javascript
+// Get data based on user language preference
+const getLocalizedContent = (data, lang = 'ar') => {
+  if (Array.isArray(data)) {
+    return data.map(item => ({
+      ...item,
+      name: lang === 'en' ? item.name_en : item.name_ar,
+      description: lang === 'en' ? item.description_en : item.description_ar,
+      // For certifications
+      issuer: lang === 'en' ? item.issuer_en : item.issuer_ar
+    }));
+  }
+  
+  return {
+    ...data,
+    company_name: lang === 'en' ? data.company_name_en : data.company_name_ar,
+    company_description: lang === 'en' ? data.company_description_en : data.company_description_ar
+  };
+};
+
+// Usage
+const arabicContent = getLocalizedContent(certifications.data, 'ar');
+const englishContent = getLocalizedContent(certifications.data, 'en');
+```
+
+---
 
 **جميع الـ APIs تعمل بدون مشاكل ومع بيانات حقيقية كاملة!** 

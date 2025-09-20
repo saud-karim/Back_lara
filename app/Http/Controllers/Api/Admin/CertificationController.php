@@ -8,6 +8,7 @@ use App\Models\Certification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class CertificationController extends Controller
@@ -46,7 +47,11 @@ class CertificationController extends Controller
                 'name_en' => 'required|string|max:255',
                 'description_ar' => 'nullable|string',
                 'description_en' => 'nullable|string',
-                'icon' => 'nullable|string|max:10',
+                'issuer_ar' => 'required|string|max:255',
+                'issuer_en' => 'required|string|max:255',
+                'issue_date' => 'required|date',
+                'expiry_date' => 'nullable|date|after:issue_date',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'order' => 'nullable|integer|min:0',
                 'is_active' => 'nullable|boolean'
             ]);
@@ -60,6 +65,14 @@ class CertificationController extends Controller
             }
 
             $data = $validator->validated();
+            
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->storeAs('public/certifications', $imageName);
+                $data['image'] = '/storage/certifications/' . $imageName;
+            }
             
             // Auto-assign order if not provided
             if (!isset($data['order'])) {
@@ -113,7 +126,11 @@ class CertificationController extends Controller
                 'name_en' => 'required|string|max:255',
                 'description_ar' => 'nullable|string',
                 'description_en' => 'nullable|string',
-                'icon' => 'nullable|string|max:10',
+                'issuer_ar' => 'required|string|max:255',
+                'issuer_en' => 'required|string|max:255',
+                'issue_date' => 'required|date',
+                'expiry_date' => 'nullable|date|after:issue_date',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'order' => 'nullable|integer|min:0',
                 'is_active' => 'nullable|boolean'
             ]);
@@ -126,7 +143,23 @@ class CertificationController extends Controller
                 ], 422);
             }
 
-            $certification->update($validator->validated());
+            $data = $validator->validated();
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($certification->image) {
+                    $oldImagePath = str_replace('/storage/', 'public/', $certification->image);
+                    Storage::delete($oldImagePath);
+                }
+
+                $image = $request->file('image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->storeAs('public/certifications', $imageName);
+                $data['image'] = '/storage/certifications/' . $imageName;
+            }
+
+            $certification->update($data);
 
             return response()->json([
                 'success' => true,
@@ -149,6 +182,12 @@ class CertificationController extends Controller
     public function destroy(Certification $certification): JsonResponse
     {
         try {
+            // Delete image if exists
+            if ($certification->image) {
+                $imagePath = str_replace('/storage/', 'public/', $certification->image);
+                Storage::delete($imagePath);
+            }
+
             $certification->delete();
 
             return response()->json([

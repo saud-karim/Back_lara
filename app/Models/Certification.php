@@ -11,7 +11,11 @@ class Certification extends Model
         'name_en',
         'description_ar',
         'description_en',
-        'icon',
+        'issuer_ar',
+        'issuer_en',
+        'issue_date',
+        'expiry_date',
+        'image',
         'order',
         'is_active'
     ];
@@ -19,6 +23,8 @@ class Certification extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'order' => 'integer',
+        'issue_date' => 'date',
+        'expiry_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
@@ -53,5 +59,13 @@ class Certification extends Model
     public function getDescription($lang = 'ar')
     {
         return $lang === 'en' ? $this->description_en : $this->description_ar;
+    }
+
+    /**
+     * Get issuer by language
+     */
+    public function getIssuer($lang = 'ar')
+    {
+        return $lang === 'en' ? $this->issuer_en : $this->issuer_ar;
     }
 }

@@ -1,5 +1,17 @@
 # 🔒 **الـ Dynamic Content Admin APIs الموجودة حالياً**
 
+## 🆕 **آخر التحديثات (2025-09-20)**
+
+### **✅ تم إكمال وتحديث Certifications Admin API:**
+- 🔧 **إكمال جدول قاعدة البيانات** بجميع الحقول المطلوبة
+- 📊 **إضافة حقول جديدة:** `issuer_ar`, `issuer_en`, `issue_date`, `expiry_date`
+- 🖼️ **تحسين معالجة الصور:** رفع، تحديث، وحذف تلقائي للصور
+- ✅ **تحديث Validation Rules** لدعم التواريخ والصور
+- 📝 **إنشاء CertificationSeeder** مع بيانات تجريبية حقيقية
+- 🔄 **تحديث JavaScript Examples** لدعم رفع الصور مع FormData
+
+---
+
 ## 🎯 **حالة النظام**
 
 **Base URL:** `http://localhost:8000/api/v1/admin/`
@@ -576,16 +588,16 @@
 
 ---
 
-### **1️⃣2️⃣ Certifications Admin API**
+### **1️⃣2️⃣ Certifications Admin API** ✅ **محدث بالكامل**
 
 #### **Endpoints:**
 - `GET /api/v1/admin/certifications` - عرض الشهادات
-- `POST /api/v1/admin/certifications` - إضافة شهادة جديدة
+- `POST /api/v1/admin/certifications` - إضافة شهادة جديدة (مع رفع الصور)
 - `GET /api/v1/admin/certifications/{id}` - عرض شهادة محددة
-- `PUT /api/v1/admin/certifications/{id}` - تحديث شهادة
-- `DELETE /api/v1/admin/certifications/{id}` - حذف شهادة
+- `PUT /api/v1/admin/certifications/{id}` - تحديث شهادة (مع رفع الصور)
+- `DELETE /api/v1/admin/certifications/{id}` - حذف شهادة (مع حذف الصورة)
 
-#### **GET Response:**
+#### **GET Response (محدث):**
 ```json
 {
   "data": [
@@ -602,8 +614,8 @@
       "image": "/storage/certifications/iso9001.jpg",
       "order": 1,
       "is_active": true,
-      "created_at": "2025-09-19 10:30:00",
-      "updated_at": "2025-09-19 10:30:00"
+      "created_at": "2025-09-20 16:36:08",
+      "updated_at": "2025-09-20 16:36:08"
     }
   ],
   "meta": {
@@ -613,7 +625,7 @@
 }
 ```
 
-#### **POST Request Example:**
+#### **POST Request Example (محدث):**
 ```json
 {
   "name_ar": "شهادة السلامة المهنية",
@@ -624,10 +636,40 @@
   "issuer_en": "Ministry of Manpower",
   "issue_date": "2022-03-20",
   "expiry_date": "2025-03-20",
+  "image": "ملف الصورة (multipart/form-data)",
   "order": 2,
   "is_active": true
 }
 ```
+
+#### **🎯 الميزات الجديدة المضافة:**
+- ✅ **معالجة رفع الصور:** دعم كامل لرفع صور الشهادات
+- ✅ **حقول الجهة المصدرة:** `issuer_ar` و `issuer_en`
+- ✅ **تواريخ الإصدار والانتهاء:** `issue_date` و `expiry_date`
+- ✅ **التحقق المتقدم:** validation للتواريخ والصور
+- ✅ **إدارة الصور:** حذف تلقائي للصور القديمة عند التحديث/الحذف
+- ✅ **بيانات تجريبية:** 3 شهادات مُدرجة بالفعل في قاعدة البيانات
+
+#### **📋 Validation Rules:**
+```php
+// POST/PUT Request Validation
+'name_ar' => 'required|string|max:255',
+'name_en' => 'required|string|max:255',
+'description_ar' => 'nullable|string',
+'description_en' => 'nullable|string',
+'issuer_ar' => 'required|string|max:255',
+'issuer_en' => 'required|string|max:255',
+'issue_date' => 'required|date',
+'expiry_date' => 'nullable|date|after:issue_date',
+'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+'order' => 'nullable|integer|min:0',
+'is_active' => 'nullable|boolean'
+```
+
+#### **📁 مجلد حفظ الصور:**
+- **المسار:** `/storage/certifications/`
+- **الأنواع المدعومة:** jpeg, png, jpg, gif
+- **الحد الأقصى:** 2MB
 
 ---
 
@@ -860,6 +902,105 @@ await updateItemsOrder(token, 'social-links', {
 });
 ```
 
+### **🏆 Certifications API with Image Upload:**
+
+```javascript
+// Create certification with image
+const createCertificationWithImage = async (token, certificationData, imageFile) => {
+  try {
+    const formData = new FormData();
+    
+    // Add text fields
+    formData.append('name_ar', certificationData.name_ar);
+    formData.append('name_en', certificationData.name_en);
+    formData.append('description_ar', certificationData.description_ar || '');
+    formData.append('description_en', certificationData.description_en || '');
+    formData.append('issuer_ar', certificationData.issuer_ar);
+    formData.append('issuer_en', certificationData.issuer_en);
+    formData.append('issue_date', certificationData.issue_date);
+    formData.append('expiry_date', certificationData.expiry_date || '');
+    formData.append('order', certificationData.order || 1);
+    formData.append('is_active', certificationData.is_active !== undefined ? certificationData.is_active : true);
+    
+    // Add image file if provided
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+
+    const response = await fetch('http://localhost:8000/api/v1/admin/certifications', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+        // Note: Don't set Content-Type for FormData, browser will set it automatically
+      },
+      body: formData
+    });
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Update certification with image
+const updateCertificationWithImage = async (token, certificationId, certificationData, imageFile) => {
+  try {
+    const formData = new FormData();
+    
+    // Add text fields
+    formData.append('name_ar', certificationData.name_ar);
+    formData.append('name_en', certificationData.name_en);
+    formData.append('description_ar', certificationData.description_ar || '');
+    formData.append('description_en', certificationData.description_en || '');
+    formData.append('issuer_ar', certificationData.issuer_ar);
+    formData.append('issuer_en', certificationData.issuer_en);
+    formData.append('issue_date', certificationData.issue_date);
+    formData.append('expiry_date', certificationData.expiry_date || '');
+    formData.append('order', certificationData.order || 1);
+    formData.append('is_active', certificationData.is_active !== undefined ? certificationData.is_active : true);
+    
+    // Add _method for Laravel to handle PUT request with FormData
+    formData.append('_method', 'PUT');
+    
+    // Add image file if provided
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+
+    const response = await fetch(`http://localhost:8000/api/v1/admin/certifications/${certificationId}`, {
+      method: 'POST', // Use POST with _method=PUT for file uploads
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      },
+      body: formData
+    });
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Example usage
+const imageFile = document.getElementById('certification-image').files[0];
+await createCertificationWithImage(token, {
+  name_ar: "شهادة الأيزو 9001",
+  name_en: "ISO 9001 Certificate",
+  description_ar: "شهادة إدارة الجودة الدولية",
+  description_en: "International Quality Management Certificate",
+  issuer_ar: "منظمة المعايير الدولية",
+  issuer_en: "International Standards Organization",
+  issue_date: "2020-01-15",
+  expiry_date: "2023-01-15",
+  order: 1,
+  is_active: true
+}, imageFile);
+```
+
 ---
 
 ## 📊 **Summary**
@@ -887,10 +1028,13 @@ await updateItemsOrder(token, 'social-links', {
 - ✅ **CRUD Operations** for Collections
 - ✅ **Singleton Management** for Company Data
 - ✅ **Order Management** for Social Links & Departments
-- ✅ **Image Upload** Support (Team Members, Certifications)
+- ✅ **Advanced Image Upload** Support (Team Members, Certifications)
+- ✅ **File Management** (Auto-delete old images on update/delete)
 - ✅ **Category Filtering** (FAQs)
+- ✅ **Date Validation** (Issue/Expiry dates for Certifications)
 - ✅ **Active/Inactive Status** Management
 - ✅ **Proper JSON Responses** for Admin Panel Integration
+- ✅ **FormData Support** for File Uploads with Form Fields
 
 ---
 
