@@ -72,6 +72,9 @@ class ContactInfoController extends Controller
                 'toll_free_label_ar' => 'nullable|string|max:100',
                 'toll_free_label_en' => 'nullable|string|max:100',
                 
+                // Google Maps URL
+                'google_maps_url' => 'nullable|url',
+                
                 // Legacy fields for backward compatibility (deprecated)
                 'address_street' => 'nullable|string|max:255',
                 'address_district' => 'nullable|string|max:100',
