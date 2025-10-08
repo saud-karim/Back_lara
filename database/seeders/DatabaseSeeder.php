@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             CleanSeeder::class,
             DynamicContentSeederFixed::class, // Updated to use the fixed version
             CertificationSeeder::class,
+            OrderSeeder::class,
         ]);
     }
 }

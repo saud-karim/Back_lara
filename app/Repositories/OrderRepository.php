@@ -101,8 +101,10 @@ class OrderRepository
         return OrderItem::create([
             'order_id' => $orderId,
             'product_id' => $itemData['product_id'],
+            'variant_id' => $itemData['variant_id'] ?? null,
             'quantity' => $itemData['quantity'],
-            'unit_price' => $itemData['unit_price'] ?? 0,
+            'unit_price' => $itemData['unit_price'] ?? $itemData['price'] ?? 0,
+            'subtotal' => $itemData['subtotal'] ?? 0,
         ]);
     }
 

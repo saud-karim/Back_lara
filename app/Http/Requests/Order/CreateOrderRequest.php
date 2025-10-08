@@ -22,11 +22,32 @@ class CreateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'shipping_address' => 'required|string|max:1000',
-            'payment_method' => 'required|in:card,cod,installment',
+            // Shipping address as JSON object
+            'shipping_address' => 'required|array',
+            'shipping_address.name' => 'required|string|max:255',
+            'shipping_address.phone' => 'required|string|max:20',
+            'shipping_address.governorate' => 'required|string|max:100',
+            'shipping_address.city' => 'required|string|max:100',
+            'shipping_address.district' => 'nullable|string|max:100',
+            'shipping_address.street' => 'required|string|max:255',
+            'shipping_address.building_number' => 'nullable|string|max:50',
+            'shipping_address.floor' => 'nullable|string|max:50',
+            'shipping_address.apartment' => 'nullable|string|max:50',
+            'shipping_address.postal_code' => 'nullable|string|max:20',
+            
+            // Payment method - match database enum values
+            'payment_method' => 'required|in:credit_card,debit_card,paypal,bank_transfer,cash_on_delivery',
+            
+            // Order items
             'items' => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.variant_id' => 'nullable|integer',
+            'items.*.price' => 'nullable|numeric|min:0',
+            
+            // Optional fields
+            'notes' => 'nullable|string|max:1000',
+            'coupon_code' => 'nullable|string|max:50',
         ];
     }
 
@@ -36,17 +57,28 @@ class CreateOrderRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'shipping_address.required' => 'Shipping address is required.',
-            'payment_method.required' => 'Payment method is required.',
-            'payment_method.in' => 'Payment method must be card, cod, or installment.',
-            'items.required' => 'Order items are required.',
-            'items.array' => 'Items must be an array.',
-            'items.min' => 'At least one item is required.',
-            'items.*.product_id.required' => 'Product ID is required for each item.',
-            'items.*.product_id.exists' => 'Selected product does not exist.',
-            'items.*.quantity.required' => 'Quantity is required for each item.',
-            'items.*.quantity.integer' => 'Quantity must be a whole number.',
-            'items.*.quantity.min' => 'Quantity must be at least 1.',
+            // Shipping address messages
+            'shipping_address.required' => 'عنوان الشحن مطلوب.',
+            'shipping_address.array' => 'عنوان الشحن يجب أن يكون بيانات كاملة.',
+            'shipping_address.name.required' => 'الاسم في عنوان الشحن مطلوب.',
+            'shipping_address.phone.required' => 'رقم الهاتف مطلوب.',
+            'shipping_address.governorate.required' => 'المحافظة مطلوبة.',
+            'shipping_address.city.required' => 'المدينة مطلوبة.',
+            'shipping_address.street.required' => 'الشارع مطلوب.',
+            
+            // Payment method messages
+            'payment_method.required' => 'طريقة الدفع مطلوبة.',
+            'payment_method.in' => 'طريقة الدفع يجب أن تكون: بطاقة ائتمان، بطاقة خصم، باي بال، تحويل بنكي، أو الدفع عند الاستلام.',
+            
+            // Items messages
+            'items.required' => 'يجب اختيار منتج واحد على الأقل.',
+            'items.array' => 'بيانات المنتجات غير صحيحة.',
+            'items.min' => 'يجب اختيار منتج واحد على الأقل.',
+            'items.*.product_id.required' => 'معرف المنتج مطلوب.',
+            'items.*.product_id.exists' => 'المنتج المحدد غير موجود.',
+            'items.*.quantity.required' => 'الكمية مطلوبة.',
+            'items.*.quantity.integer' => 'الكمية يجب أن تكون رقم صحيح.',
+            'items.*.quantity.min' => 'الكمية يجب أن تكون 1 على الأقل.',
         ];
     }
 } 

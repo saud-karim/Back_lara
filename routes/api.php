@@ -260,6 +260,13 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::delete('/clear', [CartController::class, 'clear'])->name('cart.clear');
     });
 
+    // Checkout routes
+    Route::prefix('checkout')->group(function () {
+        Route::post('/calculate-shipping', [App\Http\Controllers\Api\CheckoutController::class, 'calculateShipping'])->name('checkout.shipping');
+        Route::post('/apply-coupon', [App\Http\Controllers\Api\CheckoutController::class, 'applyCoupon'])->name('checkout.coupon');
+        Route::post('/validate-stock', [App\Http\Controllers\Api\CheckoutController::class, 'validateStock'])->name('checkout.validate');
+    });
+
     // Wishlist routes
     Route::prefix('wishlist')->group(function () {
         Route::get('/', [WishlistController::class, 'index'])->name('wishlist.index');
@@ -328,6 +335,31 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::post('/bulk', [AdminContactController::class, 'bulkAction'])->name('admin.contact.bulk');
     });
 
+    // Admin Orders Management routes
+    Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin/orders')->group(function () {
+        Route::get('/', [App\Http\Controllers\Api\Admin\OrderController::class, 'index'])->name('admin.orders.index');
+        Route::get('/stats', [App\Http\Controllers\Api\Admin\OrderController::class, 'stats'])->name('admin.orders.stats');
+        Route::post('/export', [App\Http\Controllers\Api\Admin\OrderController::class, 'exportOrders'])->name('admin.orders.export');
+        Route::post('/print', [App\Http\Controllers\Api\Admin\OrderController::class, 'printOrders'])->name('admin.orders.print');
+        Route::post('/bulk', [App\Http\Controllers\Api\Admin\OrderController::class, 'bulk'])->name('admin.orders.bulk');
+        Route::get('/{order}', [App\Http\Controllers\Api\Admin\OrderController::class, 'show'])->name('admin.orders.show');
+        Route::put('/{order}/status', [App\Http\Controllers\Api\Admin\OrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+        Route::put('/{order}/shipping', [App\Http\Controllers\Api\Admin\OrderController::class, 'updateShipping'])->name('admin.orders.updateShipping');
+        Route::put('/{order}/payment', [App\Http\Controllers\Api\Admin\OrderController::class, 'updatePayment'])->name('admin.orders.updatePayment');
+        Route::post('/{order}/notes', [App\Http\Controllers\Api\Admin\OrderController::class, 'addNotes'])->name('admin.orders.addNotes');
+        Route::post('/{order}/cancel', [App\Http\Controllers\Api\Admin\OrderController::class, 'cancelOrder'])->name('admin.orders.cancel');
+        Route::post('/{order}/refund', [App\Http\Controllers\Api\Admin\OrderController::class, 'refundOrder'])->name('admin.orders.refund');
+    });
+
+    // User Orders routes (for authenticated users)
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('orders.index');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('orders.show');
+        Route::post('/', [OrderController::class, 'store'])->name('orders.store');
+        Route::put('/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+        Route::get('/{id}/tracking', [ShipmentController::class, 'tracking'])->name('orders.tracking');
+    });
+
     // Content Management System Routes
     Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
         // Company Info Management
@@ -372,5 +404,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 
         // Certifications Management
         Route::apiResource('certifications', App\Http\Controllers\Api\Admin\CertificationController::class);
+
+
     });
 });

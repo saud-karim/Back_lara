@@ -9,14 +9,15 @@ class CheckUserRole
 {
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        if (!auth()->check()) {
+        // Try different auth guards
+        $user = auth('sanctum')->user() ?? auth()->user();
+        
+        if (!$user) {
             return response()->json([
                 "success" => false,
                 "message" => "يجب تسجيل الدخول أولاً"
             ], 401);
         }
-
-        $user = auth()->user();
         
         // تحويل الأدوار إلى array
         $allowedRoles = is_array($roles) ? $roles : [$roles];

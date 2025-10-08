@@ -10,60 +10,77 @@ class CartItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'cart_id',
         'product_id',
+        'variant_id',
         'quantity',
+        'notes',
     ];
 
     protected $casts = [
         'quantity' => 'integer',
     ];
 
-    // العلاقات
-    public function user()
+    /**
+     * Get the cart that owns the cart item.
+     */
+    public function cart()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Cart::class);
     }
 
+    /**
+     * Get the product that owns the cart item.
+     */
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    // الـ Scopes
-    public function scopeByUser($query, $userId)
+    /**
+     * Get the variant if exists.
+     * Note: ProductVariant model not implemented yet
+     */
+    public function variant()
     {
-        return $query->where('user_id', $userId);
+        return null; // ProductVariant model not implemented yet
     }
 
-    // Helper Methods
+    /**
+     * Get unit price
+     */
+    public function getUnitPriceAttribute()
+    {
+        if ($this->variant_id && $this->variant) {
+            return $this->variant->price ?? $this->product->price;
+        }
+        return $this->product->price;
+    }
+
+    /**
+     * Get total price
+     */
     public function getTotalPriceAttribute()
     {
-        return $this->quantity * $this->product->price;
+        return $this->quantity * $this->unit_price;
     }
 
-    public function increaseQuantity($amount = 1)
+    /**
+     * Get stock available
+     */
+    public function getStockAvailableAttribute()
     {
-        $this->increment('quantity', $amount);
-    }
-
-    public function decreaseQuantity($amount = 1)
-    {
-        $newQuantity = $this->quantity - $amount;
-        
-        if ($newQuantity <= 0) {
-            $this->delete();
-        } else {
-            $this->decrement('quantity', $amount);
+        if ($this->variant_id && $this->variant) {
+            return $this->variant->stock ?? $this->product->stock;
         }
+        return $this->product->stock;
     }
 
-    public function updateQuantity($quantity)
+    /**
+     * Check if item is in stock
+     */
+    public function isInStock()
     {
-        if ($quantity <= 0) {
-            $this->delete();
-        } else {
-            $this->update(['quantity' => $quantity]);
-        }
+        return $this->stock_available >= $this->quantity;
     }
-} 
+}

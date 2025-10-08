@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\Coupon;
+use App\Http\Resources\CartResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -19,37 +21,35 @@ class CartController extends Controller
     public function index(): JsonResponse
     {
         $user = Auth::user();
-        $cartItems = $user->cartItems()
-                         ->with(['product' => function ($query) {
-                             $query->where('status', 'active')
-                                   ->with(['category', 'brand']);
-                         }])
-                         ->get();
+        
+        // ✅ Get or create cart for user
+        $cart = Cart::firstOrCreate([
+            'user_id' => $user->id
+        ]);
 
-        // تنظيف السلة من المنتجات المحذوفة أو غير النشطة
-        $validItems = collect();
+        // ✅ Load cart items with products
+        $cart->load(['cartItems.product']);
+
+        // ✅ Clean cart from deleted or inactive products
         $removedCount = 0;
-
-        foreach ($cartItems as $item) {
-            if ($item->product && $item->product->status === 'active') {
-                $validItems->push($item);
-            } else {
-                // منتج محذوف أو غير نشط - إزالة من السلة
+        foreach ($cart->cartItems as $item) {
+            if (!$item->product || $item->product->status !== 'active') {
                 $item->delete();
                 $removedCount++;
             }
         }
 
-        $cart = $this->calculateCartTotals($validItems);
+        // ✅ Reload cart if items were removed
+        if ($removedCount > 0) {
+            $cart->load(['cartItems.product']);
+        }
 
         $response = [
             'success' => true,
-            'data' => [
-                'cart' => $cart
-            ]
+            'data' => new CartResource($cart)
         ];
 
-        // إشعار عن المنتجات المحذوفة
+        // ✅ Notify about removed products
         if ($removedCount > 0) {
             $response['message'] = "تم إزالة {$removedCount} منتج محذوف من سلتك.";
         }
@@ -63,8 +63,10 @@ class CartController extends Controller
     public function add(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'product_id' => 'required|integer',
-            'quantity' => 'required|integer|min:1'
+            'product_id' => 'required|integer|exists:products,id',
+            'variant_id' => 'nullable|integer|exists:product_variants,id',
+            'quantity' => 'required|integer|min:1',
+            'notes' => 'nullable|string|max:500'
         ]);
 
         $product = Product::find($validated['product_id']);
@@ -94,11 +96,20 @@ class CartController extends Controller
         }
 
         $user = Auth::user();
-        $cartItem = CartItem::where('user_id', $user->id)
+        
+        // ✅ Get or create cart for user
+        $cart = Cart::firstOrCreate([
+            'user_id' => $user->id
+        ]);
+
+        // ✅ Check if product already in cart
+        $cartItem = CartItem::where('cart_id', $cart->id)
                            ->where('product_id', $validated['product_id'])
+                           ->where('variant_id', $validated['variant_id'] ?? null)
                            ->first();
 
         if ($cartItem) {
+            // ✅ Update quantity
             $newQuantity = $cartItem->quantity + $validated['quantity'];
             
             if ($product->stock < $newQuantity) {
@@ -108,21 +119,28 @@ class CartController extends Controller
                 ], 400);
             }
 
-            $cartItem->update(['quantity' => $newQuantity]);
+            $cartItem->update([
+                'quantity' => $newQuantity,
+                'notes' => $validated['notes'] ?? $cartItem->notes
+            ]);
         } else {
+            // ✅ Create new cart item
             CartItem::create([
-                'user_id' => $user->id,
+                'cart_id' => $cart->id,
                 'product_id' => $validated['product_id'],
-                'quantity' => $validated['quantity']
+                'variant_id' => $validated['variant_id'] ?? null,
+                'quantity' => $validated['quantity'],
+                'notes' => $validated['notes'] ?? null
             ]);
         }
+
+        // ✅ Reload cart with items
+        $cart->load(['cartItems.product']);
 
         return response()->json([
             'success' => true,
             'message' => 'تم إضافة المنتج للسلة بنجاح',
-            'data' => [
-                'cart' => $this->getCartData()
-            ]
+            'data' => new CartResource($cart)
         ]);
     }
 
@@ -132,13 +150,28 @@ class CartController extends Controller
     public function update(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'product_id' => 'required|integer',
-            'quantity' => 'required|integer|min:0'
+            'product_id' => 'required|integer|exists:products,id',
+            'variant_id' => 'nullable|integer|exists:product_variants,id',
+            'quantity' => 'required|integer|min:0',
+            'notes' => 'nullable|string|max:500'
         ]);
 
         $user = Auth::user();
-        $cartItem = CartItem::where('user_id', $user->id)
+        
+        // ✅ Get user's cart
+        $cart = Cart::where('user_id', $user->id)->first();
+        
+        if (!$cart) {
+            return response()->json([
+                'success' => false,
+                'message' => 'السلة فارغة'
+            ], 404);
+        }
+
+        // ✅ Find cart item
+        $cartItem = CartItem::where('cart_id', $cart->id)
                            ->where('product_id', $validated['product_id'])
+                           ->where('variant_id', $validated['variant_id'] ?? null)
                            ->first();
 
         if (!$cartItem) {
@@ -152,11 +185,10 @@ class CartController extends Controller
             $cartItem->delete();
             $message = 'تم إزالة المنتج من السلة';
         } else {
-            // التحقق من المنتج ومخزونه
+            // ✅ Check product and stock
             $product = Product::find($validated['product_id']);
             
             if (!$product || $product->status !== 'active') {
-                // منتج محذوف أو غير نشط - إزالة من السلة
                 $cartItem->delete();
                 return response()->json([
                     'success' => false,
@@ -171,16 +203,20 @@ class CartController extends Controller
                 ], 400);
             }
 
-            $cartItem->update(['quantity' => $validated['quantity']]);
+            $cartItem->update([
+                'quantity' => $validated['quantity'],
+                'notes' => $validated['notes'] ?? $cartItem->notes
+            ]);
             $message = 'تم تحديث السلة بنجاح';
         }
+
+        // ✅ Reload cart with items
+        $cart->load(['cartItems.product']);
 
         return response()->json([
             'success' => true,
             'message' => $message,
-            'data' => [
-                'cart' => $this->getCartData()
-            ]
+            'data' => new CartResource($cart)
         ]);
     }
 
@@ -190,7 +226,19 @@ class CartController extends Controller
     public function remove($productId): JsonResponse
     {
         $user = Auth::user();
-        $cartItem = CartItem::where('user_id', $user->id)
+        
+        // ✅ Get user's cart
+        $cart = Cart::where('user_id', $user->id)->first();
+        
+        if (!$cart) {
+            return response()->json([
+                'success' => false,
+                'message' => 'السلة فارغة'
+            ], 404);
+        }
+
+        // ✅ Find cart item
+        $cartItem = CartItem::where('cart_id', $cart->id)
                            ->where('product_id', $productId)
                            ->first();
 
@@ -203,12 +251,13 @@ class CartController extends Controller
 
         $cartItem->delete();
 
+        // ✅ Reload cart with items
+        $cart->load(['cartItems.product']);
+
         return response()->json([
             'success' => true,
             'message' => 'تم إزالة المنتج من السلة بنجاح',
-            'data' => [
-                'cart' => $this->getCartData()
-            ]
+            'data' => new CartResource($cart)
         ]);
     }
 
@@ -307,23 +356,36 @@ class CartController extends Controller
      */
     public function clear(): JsonResponse
     {
-        Auth::user()->cartItems()->delete();
+        $user = Auth::user();
+        
+        // ✅ Get user's cart
+        $cart = Cart::where('user_id', $user->id)->first();
+        
+        if ($cart) {
+            // ✅ Delete all cart items
+            $cart->cartItems()->delete();
+        }
+
         session()->forget('applied_coupon');
 
         return response()->json([
             'success' => true,
             'message' => 'تم إفراغ السلة بنجاح',
             'data' => [
-                'cart' => [
-                    'items' => [],
-                    'subtotal' => 0,
-                    'tax' => 0,
-                    'shipping' => 0,
-                    'discount' => 0,
-                    'total' => 0,
-                    'currency' => 'EGP',
-                    'items_count' => 0
-                ]
+                'id' => $cart->id ?? null,
+                'user_id' => $user->id,
+                'items_count' => 0,
+                'items' => [],
+                'summary' => [
+                    'subtotal' => 0.00,
+                    'shipping' => 0.00,
+                    'tax' => 0.00,
+                    'discount' => 0.00,
+                    'total' => 0.00,
+                    'currency' => 'EGP'
+                ],
+                'created_at' => $cart ? $cart->created_at?->toISOString() : now()->toISOString(),
+                'updated_at' => $cart ? $cart->updated_at?->toISOString() : now()->toISOString()
             ]
         ]);
     }
@@ -374,12 +436,14 @@ class CartController extends Controller
                 'id' => 'cart_' . Auth::id(),
                 'user_id' => Auth::id(),
                 'items' => [],
-                'subtotal' => 0,
-                'tax' => 0,
-                'shipping' => 0,
-                'discount' => 0,
-                'total' => 0,
-                'currency' => 'EGP',
+                'summary' => [
+                    'subtotal' => 0.00,
+                    'tax' => 0.00,
+                    'shipping' => 0.00,
+                    'discount' => 0.00,
+                    'total' => 0.00,
+                    'currency' => 'EGP'
+                ],
                 'items_count' => 0
             ];
         }
@@ -402,7 +466,7 @@ class CartController extends Controller
             }
         }
 
-        $taxRate = 0.14; // 14% ضريبة
+        $taxRate = 0.00; // No tax for now (was 14%)
         $tax = ($subtotal - $discount) * $taxRate;
         
         $shipping = $subtotal > 500 ? 0 : 50; // شحن مجاني فوق 500 جنيه
@@ -417,16 +481,21 @@ class CartController extends Controller
                     return null;
                 }
                 
+                $unitPrice = (float) $item->product->price;
+                $totalPrice = $item->quantity * $unitPrice;
+                
                 return [
                     'id' => $item->id,
                     'product_id' => $item->product_id,
+                    'product_name' => $item->product->name_ar ?: $item->product->name_en,
                     'quantity' => $item->quantity,
-                    'unit_price' => (string) $item->product->price,
-                    'total_price' => (string) ($item->quantity * $item->product->price),
+                    'unit_price' => $unitPrice,
+                    'total_price' => $totalPrice,
                     'product' => [
                         'id' => $item->product->id,
-                        'name' => $item->product->name_ar ?: $item->product->name_en,
-                        'price' => (string) $item->product->price,
+                        'name_ar' => $item->product->name_ar,
+                        'name_en' => $item->product->name_en,
+                        'price' => $unitPrice,
                         'images' => is_string($item->product->images) 
                             ? json_decode($item->product->images, true) 
                             : $item->product->images,
@@ -436,13 +505,15 @@ class CartController extends Controller
                         'status' => $item->product->status
                     ]
                 ];
-            })->filter(), // إزالة العناصر null
-            'subtotal' => (string) round($subtotal, 2),
-            'tax' => (string) round($tax, 2),
-            'shipping' => (string) $shipping,
-            'discount' => (string) round($discount, 2),
-            'total' => (string) round($total, 2),
-            'currency' => 'EGP',
+            })->filter()->values(), // إزالة العناصر null
+            'summary' => [
+                'subtotal' => (float) round($subtotal, 2),
+                'tax' => (float) round($tax, 2),
+                'shipping' => (float) $shipping,
+                'discount' => (float) round($discount, 2),
+                'total' => (float) round($total, 2),
+                'currency' => 'EGP'
+            ],
             'items_count' => $cartItems->sum('quantity')
         ];
     }
