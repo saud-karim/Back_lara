@@ -30,6 +30,9 @@ class Order extends Model
         'shipping_address',
         'notes',
         'tracking_number',
+        'shipping_company',
+        'shipping_status',
+        'shipped_at',
         'estimated_delivery',
         'cancelled_at',
         'cancellation_reason',
@@ -49,6 +52,7 @@ class Order extends Model
         'shipping_address' => 'array',
         'estimated_delivery' => 'date',
         'cancelled_at' => 'datetime',
+        'shipped_at' => 'datetime',
     ];
 
     /**

@@ -351,6 +351,14 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
         Route::post('/{order}/refund', [App\Http\Controllers\Api\Admin\OrderController::class, 'refundOrder'])->name('admin.orders.refund');
     });
 
+    // Admin Shipping routes
+    Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin/shipping')->group(function () {
+        Route::post('/preview', [App\Http\Controllers\Api\Admin\ShippingController::class, 'preview'])->name('admin.shipping.preview');
+        Route::post('/send', [App\Http\Controllers\Api\Admin\ShippingController::class, 'send'])->name('admin.shipping.send');
+        Route::post('/retry', [App\Http\Controllers\Api\Admin\ShippingController::class, 'retry'])->name('admin.shipping.retry');
+        Route::get('/status/{order_id}', [App\Http\Controllers\Api\Admin\ShippingController::class, 'status'])->name('admin.shipping.status');
+    });
+
     // User Orders routes (for authenticated users)
     Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index'])->name('orders.index');
